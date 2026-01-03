@@ -132,14 +132,37 @@
   }
 
   .prose-blog {
-    @apply prose prose-lg max-w-none;
-    @apply prose-headings:font-display prose-headings:text-foreground;
-    @apply prose-p:text-foreground/85 prose-p:leading-relaxed;
-    @apply prose-a:text-accent prose-a:no-underline hover:prose-a:underline;
-    @apply prose-strong:text-foreground prose-strong:font-semibold;
-    @apply prose-blockquote:border-l-accent prose-blockquote:text-muted-foreground;
-    @apply prose-code:bg-muted prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded;
-    @apply prose-img:rounded-lg;
+    @apply max-w-none text-lg leading-relaxed;
+  }
+
+  .prose-blog h2,
+  .prose-blog h3,
+  .prose-blog h4 {
+    @apply font-display text-foreground;
+  }
+
+  .prose-blog p {
+    @apply text-foreground/85 leading-relaxed;
+  }
+
+  .prose-blog a {
+    @apply text-accent no-underline hover:underline;
+  }
+
+  .prose-blog strong {
+    @apply text-foreground font-semibold;
+  }
+
+  .prose-blog blockquote {
+    @apply border-l-4 border-accent text-muted-foreground;
+  }
+
+  .prose-blog code {
+    @apply bg-muted px-1.5 py-0.5 rounded text-sm;
+  }
+
+  .prose-blog img {
+    @apply rounded-lg;
   }
 
   .card-hover {
