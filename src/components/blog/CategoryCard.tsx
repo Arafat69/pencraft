@@ -2,6 +2,8 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import { Category } from "@/lib/data";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { categoryTranslations } from "@/lib/translations";
 
 interface CategoryCardProps {
   category: Category;
@@ -9,6 +11,12 @@ interface CategoryCardProps {
 }
 
 export default function CategoryCard({ category, index = 0 }: CategoryCardProps) {
+  const { language, t } = useLanguage();
+  
+  const catTrans = categoryTranslations[category.id];
+  const name = language === "bn" && catTrans ? catTrans.name : category.name;
+  const description = language === "bn" && catTrans ? catTrans.description : category.description;
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -31,7 +39,7 @@ export default function CategoryCard({ category, index = 0 }: CategoryCardProps)
               className="text-2xl font-display font-bold"
               style={{ color: category.color }}
             >
-              {category.name.charAt(0)}
+              {name.charAt(0)}
             </span>
           </div>
           <ArrowRight
@@ -40,13 +48,13 @@ export default function CategoryCard({ category, index = 0 }: CategoryCardProps)
           />
         </div>
         <h3 className="font-display text-lg font-semibold text-foreground mb-2">
-          {category.name}
+          {name}
         </h3>
         <p className="text-sm text-muted-foreground line-clamp-2 mb-3">
-          {category.description}
+          {description}
         </p>
         <span className="text-xs font-medium text-muted-foreground">
-          {category.postCount} articles
+          {category.postCount} {t("post.articles")}
         </span>
       </Link>
     </motion.div>
