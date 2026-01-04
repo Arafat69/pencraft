@@ -121,6 +121,19 @@
     @apply bg-background text-foreground font-sans antialiased;
   }
 
+  body.font-bengali {
+    font-family: "Hind Siliguri", "Noto Sans Bengali", sans-serif;
+  }
+
+  body.font-bengali h1,
+  body.font-bengali h2,
+  body.font-bengali h3,
+  body.font-bengali h4,
+  body.font-bengali h5,
+  body.font-bengali h6 {
+    font-family: "Hind Siliguri", "Noto Sans Bengali", sans-serif;
+  }
+
   h1, h2, h3, h4, h5, h6 {
     @apply font-display;
   }
