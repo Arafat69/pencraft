@@ -2,8 +2,6 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Clock, Eye, Heart } from "lucide-react";
 import { Post, formatDate, formatNumber } from "@/lib/data";
-import { useLanguage } from "@/contexts/LanguageContext";
-import { postTranslations, categoryTranslations, authorTranslations } from "@/lib/translations";
 
 interface PostCardProps {
   post: Post;
@@ -16,17 +14,6 @@ export default function PostCard({
   variant = "default",
   index = 0,
 }: PostCardProps) {
-  const { language, t } = useLanguage();
-  
-  // Get translated content
-  const postTrans = postTranslations[post.id];
-  const catTrans = categoryTranslations[post.category.id];
-  const authorTrans = authorTranslations[post.author.id];
-  
-  const title = language === "bn" && postTrans ? postTrans.title : post.title;
-  const excerpt = language === "bn" && postTrans ? postTrans.excerpt : post.excerpt;
-  const categoryName = language === "bn" && catTrans ? catTrans.name : post.category.name;
-  const authorName = language === "bn" && authorTrans ? authorTrans.name : post.author.name;
   if (variant === "featured") {
     return (
       <motion.article
@@ -39,7 +26,7 @@ export default function PostCard({
           <div className="aspect-[16/9] overflow-hidden">
             <img
               src={post.featuredImage}
-              alt={title}
+              alt={post.title}
               className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
               loading="lazy"
             />
@@ -51,34 +38,34 @@ export default function PostCard({
                 className="px-3 py-1 text-xs font-medium rounded-full"
                 style={{ backgroundColor: post.category.color }}
               >
-                {categoryName}
+                {post.category.name}
               </span>
               {post.trending && (
                 <span className="px-3 py-1 text-xs font-medium rounded-full bg-accent text-accent-foreground">
-                  {language === "bn" ? "ট্রেন্ডিং" : "Trending"}
+                  Trending
                 </span>
               )}
             </div>
             <h3 className="font-display text-2xl lg:text-3xl font-semibold mb-3 line-clamp-2">
-              {title}
+              {post.title}
             </h3>
             <p className="text-primary-foreground/80 text-sm line-clamp-2 mb-4">
-              {excerpt}
+              {post.excerpt}
             </p>
             <div className="flex items-center gap-4">
               <img
                 src={post.author.avatar}
-                alt={authorName}
+                alt={post.author.name}
                 className="w-8 h-8 rounded-full object-cover"
               />
               <div className="flex items-center gap-4 text-sm text-primary-foreground/70">
-                <span>{authorName}</span>
+                <span>{post.author.name}</span>
                 <span>·</span>
                 <span>{formatDate(post.publishedAt)}</span>
                 <span>·</span>
                 <span className="flex items-center gap-1">
                   <Clock className="w-4 h-4" />
-                  {post.readingTime} {t("post.min_read")}
+                  {post.readingTime} min read
                 </span>
               </div>
             </div>
@@ -100,7 +87,7 @@ export default function PostCard({
           <div className="w-24 h-24 rounded-lg overflow-hidden">
             <img
               src={post.featuredImage}
-              alt={title}
+              alt={post.title}
               className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
               loading="lazy"
             />
@@ -112,12 +99,12 @@ export default function PostCard({
               className="text-xs font-medium"
               style={{ color: post.category.color }}
             >
-              {categoryName}
+              {post.category.name}
             </span>
           </Link>
           <Link to={`/blog/${post.slug}`}>
             <h4 className="font-display text-base font-semibold text-foreground line-clamp-2 mt-1 group-hover:text-accent transition-colors">
-              {title}
+              {post.title}
             </h4>
           </Link>
           <div className="flex items-center gap-3 mt-2 text-xs text-muted-foreground">
@@ -143,7 +130,7 @@ export default function PostCard({
         <div className="aspect-[16/10] overflow-hidden">
           <img
             src={post.featuredImage}
-            alt={title}
+            alt={post.title}
             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
             loading="lazy"
           />
@@ -156,17 +143,17 @@ export default function PostCard({
               className="px-2.5 py-1 text-xs font-medium rounded-full text-primary-foreground"
               style={{ backgroundColor: post.category.color }}
             >
-              {categoryName}
+              {post.category.name}
             </span>
           </Link>
         </div>
         <Link to={`/blog/${post.slug}`}>
           <h3 className="font-display text-xl font-semibold text-foreground line-clamp-2 mb-2 group-hover:text-accent transition-colors">
-            {title}
+            {post.title}
           </h3>
         </Link>
         <p className="text-muted-foreground text-sm line-clamp-2 mb-4">
-          {excerpt}
+          {post.excerpt}
         </p>
         <div className="flex items-center justify-between">
           <Link
@@ -175,17 +162,17 @@ export default function PostCard({
           >
             <img
               src={post.author.avatar}
-              alt={authorName}
+              alt={post.author.name}
               className="w-8 h-8 rounded-full object-cover"
             />
             <span className="text-sm text-muted-foreground">
-              {authorName}
+              {post.author.name}
             </span>
           </Link>
           <div className="flex items-center gap-3 text-xs text-muted-foreground">
             <span className="flex items-center gap-1">
               <Clock className="w-3.5 h-3.5" />
-              {post.readingTime} {language === "bn" ? "মি." : "min"}
+              {post.readingTime} min
             </span>
             <span className="flex items-center gap-1">
               <Heart className="w-3.5 h-3.5" />
