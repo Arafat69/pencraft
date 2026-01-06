@@ -1,6 +1,5 @@
 import { Link } from "react-router-dom";
 import { Twitter, Linkedin, Github, Instagram, Mail } from "lucide-react";
-import { useLanguage } from "@/contexts/LanguageContext";
 
 const socialLinks = [
   { name: "Twitter", icon: Twitter, href: "#" },
@@ -9,26 +8,25 @@ const socialLinks = [
   { name: "Instagram", icon: Instagram, href: "#" },
 ];
 
-export default function Footer() {
-  const { t } = useLanguage();
+const footerLinks = {
+  explore: [
+    { name: "Home", href: "/" },
+    { name: "Blog", href: "/blog" },
+    { name: "Categories", href: "/categories" },
+    { name: "Authors", href: "/authors" },
+  ],
+  categories: [
+    { name: "Categories", href: "/categories" },
+  ],
+  company: [
+    { name: "About", href: "/about" },
+    { name: "Contact", href: "/contact" },
+    { name: "Privacy Policy", href: "/privacy" },
+    { name: "Terms of Service", href: "/terms" },
+  ],
+};
 
-  const footerLinks = {
-    explore: [
-      { name: t("nav.home"), href: "/" },
-      { name: t("nav.blog"), href: "/blog" },
-      { name: t("nav.categories"), href: "/categories" },
-      { name: t("section.all_authors"), href: "/authors" },
-    ],
-    categories: [
-      { name: t("nav.categories"), href: "/categories" },
-    ],
-    company: [
-      { name: t("nav.about"), href: "/about" },
-      { name: t("nav.contact"), href: "/contact" },
-      { name: t("footer.privacy"), href: "/privacy" },
-      { name: t("footer.terms"), href: "/terms" },
-    ],
-  };
+export default function Footer() {
   return (
     <footer className="bg-card border-t border-border">
       <div className="container-blog py-12 lg:py-16">
@@ -46,24 +44,24 @@ export default function Footer() {
               </span>
             </Link>
             <p className="text-muted-foreground text-sm leading-relaxed mb-6 max-w-sm">
-              {t("footer.description")}
+              A platform for curious minds. We curate stories on design, technology, and lifestyle that inspire and inform.
             </p>
 
             <div className="mb-6">
               <h4 className="font-semibold text-foreground mb-3">
-                {t("newsletter.title")}
+                Stay Updated
               </h4>
               <form className="flex gap-2">
                 <input
                   type="email"
-                  placeholder={t("newsletter.placeholder")}
+                  placeholder="Enter your email"
                   className="flex-1 px-4 py-2 text-sm bg-secondary rounded-md border-none outline-none focus:ring-2 focus:ring-accent"
                 />
                 <button
                   type="submit"
                   className="px-4 py-2 bg-accent text-accent-foreground rounded-md text-sm font-medium hover:opacity-90 transition-opacity"
                 >
-                  {t("newsletter.button")}
+                  Subscribe
                 </button>
               </form>
             </div>
@@ -85,7 +83,7 @@ export default function Footer() {
 
           {/* Links */}
           <div>
-            <h4 className="font-semibold text-foreground mb-4">{t("footer.quick_links")}</h4>
+            <h4 className="font-semibold text-foreground mb-4">Quick Links</h4>
             <ul className="space-y-3">
               {footerLinks.explore.map((link) => (
                 <li key={link.name}>
@@ -101,7 +99,7 @@ export default function Footer() {
           </div>
 
           <div>
-            <h4 className="font-semibold text-foreground mb-4">{t("nav.categories")}</h4>
+            <h4 className="font-semibold text-foreground mb-4">Categories</h4>
             <ul className="space-y-3">
               {footerLinks.categories.map((link) => (
                 <li key={link.name}>
@@ -117,7 +115,7 @@ export default function Footer() {
           </div>
 
           <div>
-            <h4 className="font-semibold text-foreground mb-4">{t("footer.legal")}</h4>
+            <h4 className="font-semibold text-foreground mb-4">Legal</h4>
             <ul className="space-y-3">
               {footerLinks.company.map((link) => (
                 <li key={link.name}>
@@ -136,7 +134,7 @@ export default function Footer() {
         {/* Bottom */}
         <div className="mt-12 pt-8 border-t border-border flex flex-col sm:flex-row justify-between items-center gap-4">
           <p className="text-sm text-muted-foreground">
-            © {new Date().getFullYear()} Pencraft. {t("footer.rights")}
+            © {new Date().getFullYear()} Pencraft. All rights reserved.
           </p>
           <div className="flex items-center gap-4 text-sm text-muted-foreground">
             <Link to="/privacy" className="hover:text-foreground transition-colors">
@@ -150,7 +148,7 @@ export default function Footer() {
               className="flex items-center gap-1 hover:text-foreground transition-colors"
             >
               <Mail className="h-4 w-4" />
-              {t("nav.contact")}
+              Contact
             </a>
           </div>
         </div>

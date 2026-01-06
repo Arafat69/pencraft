@@ -2,12 +2,10 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { Send, Loader2 } from "lucide-react";
 import { toast } from "sonner";
-import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function Newsletter() {
   const [email, setEmail] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const { t } = useLanguage();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -18,7 +16,7 @@ export default function Newsletter() {
     await new Promise((resolve) => setTimeout(resolve, 1000));
     setIsLoading(false);
     setEmail("");
-    toast.success(t("newsletter.success"));
+    toast.success("Thanks for subscribing! Check your inbox for confirmation.");
   };
 
   return (
@@ -56,10 +54,10 @@ export default function Newsletter() {
 
       <div className="relative max-w-2xl mx-auto text-center">
         <h2 className="font-display text-3xl lg:text-4xl font-semibold text-primary-foreground mb-4">
-          {t("newsletter.title")}
+          Stay Updated
         </h2>
         <p className="text-primary-foreground/80 text-lg mb-8">
-          {t("newsletter.subtitle")}
+          Get the latest articles delivered straight to your inbox. No spam, unsubscribe anytime.
         </p>
 
         <form
@@ -70,7 +68,7 @@ export default function Newsletter() {
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            placeholder={t("newsletter.placeholder")}
+            placeholder="Enter your email"
             className="flex-1 px-4 py-3 rounded-lg bg-primary-foreground text-foreground placeholder:text-muted-foreground outline-none focus:ring-2 focus:ring-accent"
             required
           />
@@ -83,7 +81,7 @@ export default function Newsletter() {
               <Loader2 className="w-5 h-5 animate-spin" />
             ) : (
               <>
-                {t("newsletter.button")}
+                Subscribe
                 <Send className="w-4 h-4" />
               </>
             )}
@@ -91,7 +89,7 @@ export default function Newsletter() {
         </form>
 
         <p className="text-sm text-primary-foreground/60 mt-4">
-          {t("footer.privacy")}
+          We respect your privacy. Unsubscribe at any time.
         </p>
       </div>
     </motion.section>

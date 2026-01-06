@@ -6,7 +6,6 @@ import PostCard from "@/components/blog/PostCard";
 import CategoryCard from "@/components/blog/CategoryCard";
 import AuthorCard from "@/components/blog/AuthorCard";
 import Newsletter from "@/components/blog/Newsletter";
-import { useLanguage } from "@/contexts/LanguageContext";
 import {
   posts,
   categories,
@@ -16,7 +15,6 @@ import {
 } from "@/lib/data";
 
 export default function Index() {
-  const { t } = useLanguage();
   const featuredPosts = getFeaturedPosts();
   const trendingPosts = getTrendingPosts();
   const latestPosts = posts.slice(0, 6);
@@ -34,27 +32,27 @@ export default function Index() {
           >
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent/10 text-accent text-sm font-medium mb-6">
               <Sparkles className="w-4 h-4" />
-              {t("hero.title")}
+              Welcome to Pencraft
             </div>
             <h1 className="font-display text-4xl sm:text-5xl lg:text-6xl font-bold text-foreground leading-tight mb-6">
-              {t("hero.title")}
+              Stories that inspire, ideas that matter
             </h1>
             <p className="text-lg lg:text-xl text-muted-foreground leading-relaxed mb-8 max-w-2xl">
-              {t("hero.subtitle")}
+              Discover thoughtfully crafted articles on design, technology, lifestyle, and more. Join our community of curious minds.
             </p>
             <div className="flex flex-wrap gap-4">
               <Link
                 to="/blog"
                 className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-primary-foreground rounded-lg font-medium hover:opacity-90 transition-opacity"
               >
-                {t("hero.explore")}
+                Explore Articles
                 <ArrowRight className="w-4 h-4" />
               </Link>
               <Link
                 to="/about"
                 className="inline-flex items-center gap-2 px-6 py-3 bg-secondary text-secondary-foreground rounded-lg font-medium hover:bg-muted transition-colors"
               >
-                {t("nav.about")}
+                About Us
               </Link>
             </div>
           </motion.div>
@@ -69,14 +67,14 @@ export default function Index() {
               <div className="flex items-center gap-3">
                 <Sparkles className="w-5 h-5 text-accent" />
                 <h2 className="font-display text-2xl lg:text-3xl font-semibold text-foreground">
-                  {t("section.featured")}
+                  Featured Stories
                 </h2>
               </div>
               <Link
                 to="/blog"
                 className="hidden sm:flex items-center gap-1 text-sm font-medium text-accent hover:underline"
               >
-                {t("section.view_all")}
+                View All
                 <ArrowRight className="w-4 h-4" />
               </Link>
             </div>
@@ -100,13 +98,13 @@ export default function Index() {
         <div className="container-blog">
           <div className="flex items-center justify-between mb-8">
             <h2 className="font-display text-2xl lg:text-3xl font-semibold text-foreground">
-              {t("section.categories")}
+              Browse by Category
             </h2>
             <Link
               to="/categories"
               className="hidden sm:flex items-center gap-1 text-sm font-medium text-accent hover:underline"
             >
-              {t("section.all_categories")}
+              All Categories
               <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
@@ -127,13 +125,13 @@ export default function Index() {
             <div className="flex-1">
               <div className="flex items-center justify-between mb-8">
                 <h2 className="font-display text-2xl lg:text-3xl font-semibold text-foreground">
-                  {t("section.latest")}
+                  Latest Articles
                 </h2>
                 <Link
                   to="/blog"
                   className="hidden sm:flex items-center gap-1 text-sm font-medium text-accent hover:underline"
                 >
-                  {t("section.view_all")}
+                  View All
                   <ArrowRight className="w-4 h-4" />
                 </Link>
               </div>
@@ -149,7 +147,7 @@ export default function Index() {
                   to="/blog"
                   className="inline-flex items-center gap-2 px-6 py-3 bg-secondary text-secondary-foreground rounded-lg font-medium hover:bg-muted transition-colors"
                 >
-                  {t("section.view_all_posts")}
+                  View All Posts
                   <ArrowRight className="w-4 h-4" />
                 </Link>
               </div>
@@ -162,7 +160,7 @@ export default function Index() {
                 <div className="flex items-center gap-2 mb-4">
                   <TrendingUp className="w-5 h-5 text-accent" />
                   <h3 className="font-display text-lg font-semibold text-foreground">
-                    {t("section.trending")}
+                    Trending Now
                   </h3>
                 </div>
                 <div className="space-y-1">
@@ -180,7 +178,7 @@ export default function Index() {
               {/* Popular Authors */}
               <div className="bg-card rounded-xl p-6 shadow-soft">
                 <h3 className="font-display text-lg font-semibold text-foreground mb-4">
-                  {t("section.popular_authors")}
+                  Popular Authors
                 </h3>
                 <div className="space-y-1">
                   {authors.slice(0, 4).map((author) => (
@@ -195,7 +193,7 @@ export default function Index() {
                   to="/authors"
                   className="flex items-center justify-center gap-1 mt-4 text-sm font-medium text-accent hover:underline"
                 >
-                  {t("section.all_authors")}
+                  All Authors
                   <ArrowRight className="w-4 h-4" />
                 </Link>
               </div>

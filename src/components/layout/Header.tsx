@@ -1,17 +1,16 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, Search, Sun, Moon, User, Languages } from "lucide-react";
+import { Menu, X, Search, Sun, Moon, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useTheme } from "@/contexts/ThemeContext";
-import { useLanguage } from "@/contexts/LanguageContext";
 
 const navigation = [
-  { key: "nav.home", href: "/" },
-  { key: "nav.blog", href: "/blog" },
-  { key: "nav.categories", href: "/categories" },
-  { key: "nav.about", href: "/about" },
-  { key: "nav.contact", href: "/contact" },
+  { name: "Home", href: "/" },
+  { name: "Blog", href: "/blog" },
+  { name: "Categories", href: "/categories" },
+  { name: "About", href: "/about" },
+  { name: "Contact", href: "/contact" },
 ];
 
 export default function Header() {
@@ -20,7 +19,6 @@ export default function Header() {
   const [searchQuery, setSearchQuery] = useState("");
   const location = useLocation();
   const { theme, toggleTheme } = useTheme();
-  const { language, setLanguage, t } = useLanguage();
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -49,7 +47,7 @@ export default function Header() {
           <div className="hidden lg:flex items-center gap-8">
             {navigation.map((item) => (
               <Link
-                key={item.key}
+                key={item.name}
                 to={item.href}
                 className={`text-sm font-medium transition-colors link-underline ${
                   location.pathname === item.href
@@ -57,7 +55,7 @@ export default function Header() {
                     : "text-muted-foreground hover:text-foreground"
                 }`}
               >
-                {t(item.key)}
+                {item.name}
               </Link>
             ))}
           </div>
@@ -78,7 +76,7 @@ export default function Header() {
                     type="text"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder={t("search.placeholder")}
+                    placeholder="Search articles..."
                     className="w-full px-3 py-1.5 text-sm bg-secondary rounded-md border-none outline-none focus:ring-2 focus:ring-accent"
                     autoFocus
                   />
@@ -93,17 +91,6 @@ export default function Header() {
               className="text-muted-foreground hover:text-foreground"
             >
               <Search className="h-5 w-5" />
-            </Button>
-
-            {/* Language Toggle */}
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setLanguage(language === "en" ? "bn" : "en")}
-              className="text-muted-foreground hover:text-foreground gap-1.5 font-medium"
-            >
-              <Languages className="h-4 w-4" />
-              <span className="text-xs">{language === "en" ? "বাংলা" : "EN"}</span>
             </Button>
 
             {/* Theme Toggle */}
@@ -124,7 +111,7 @@ export default function Header() {
             <Link to="/login" className="hidden sm:block">
               <Button variant="outline" size="sm" className="gap-2">
                 <User className="h-4 w-4" />
-                {t("nav.signin")}
+                Sign In
               </Button>
             </Link>
 
@@ -160,14 +147,14 @@ export default function Header() {
                     type="text"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder={t("search.placeholder")}
+                    placeholder="Search articles..."
                     className="w-full px-4 py-2 text-sm bg-secondary rounded-md border-none outline-none"
                   />
                 </form>
 
                 {navigation.map((item) => (
                   <Link
-                    key={item.key}
+                    key={item.name}
                     to={item.href}
                     onClick={() => setMobileMenuOpen(false)}
                     className={`block px-4 py-2 text-base font-medium rounded-md transition-colors ${
@@ -176,22 +163,9 @@ export default function Header() {
                         : "text-muted-foreground hover:bg-secondary hover:text-foreground"
                     }`}
                   >
-                    {t(item.key)}
+                    {item.name}
                   </Link>
                 ))}
-
-                {/* Mobile Language Toggle */}
-                <div className="px-4 py-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setLanguage(language === "en" ? "bn" : "en")}
-                    className="w-full gap-2"
-                  >
-                    <Languages className="h-4 w-4" />
-                    {language === "en" ? "বাংলায় পড়ুন" : "Read in English"}
-                  </Button>
-                </div>
 
                 <div className="pt-4 border-t border-border">
                   <Link
@@ -201,7 +175,7 @@ export default function Header() {
                   >
                     <Button className="w-full" variant="outline">
                       <User className="h-4 w-4 mr-2" />
-                      {t("nav.signin")}
+                      Sign In
                     </Button>
                   </Link>
                 </div>

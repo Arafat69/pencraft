@@ -13,6 +13,7 @@ import {
   ArrowLeft,
   ArrowRight,
   MessageCircle,
+  Languages,
 } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import PostCard from "@/components/blog/PostCard";
@@ -26,12 +27,14 @@ import {
 } from "@/lib/data";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import { postTranslations } from "@/lib/translations";
 
 export default function BlogPost() {
   const { slug } = useParams<{ slug: string }>();
   const [readingProgress, setReadingProgress] = useState(0);
   const [liked, setLiked] = useState(false);
   const [bookmarked, setBookmarked] = useState(false);
+  const [isBengali, setIsBengali] = useState(false);
 
   const post = getPostBySlug(slug || "");
   const relatedPosts = post ? getRelatedPosts(post, 3) : [];
@@ -41,6 +44,11 @@ export default function BlogPost() {
   const prevPost = currentIndex > 0 ? posts[currentIndex - 1] : null;
   const nextPost =
     currentIndex < posts.length - 1 ? posts[currentIndex + 1] : null;
+
+  // Scroll to top on mount
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [slug]);
 
   // Reading progress bar
   useEffect(() => {
@@ -65,6 +73,10 @@ export default function BlogPost() {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  // Get translated title
+  const postTrans = post ? postTranslations[post.id] : null;
+  const displayTitle = isBengali && postTrans ? postTrans.title : post?.title;
 
   if (!post) {
     return (
@@ -229,10 +241,19 @@ export default function BlogPost() {
               </Link>
             </div>
 
-            {/* Title */}
-            <h1 className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground leading-tight mb-6">
-              {post.title}
-            </h1>
+            {/* Title with Language Toggle */}
+            <div className="relative">
+              <h1 className={`font-display text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground leading-tight mb-4 ${isBengali ? 'font-bengali' : ''}`}>
+                {displayTitle}
+              </h1>
+              <button
+                onClick={() => setIsBengali(!isBengali)}
+                className="inline-flex items-center gap-2 px-3 py-1.5 text-sm font-medium rounded-full bg-accent/10 text-accent hover:bg-accent/20 transition-colors mb-6"
+              >
+                <Languages className="w-4 h-4" />
+                {isBengali ? "English" : "বাংলা"}
+              </button>
+            </div>
 
             {/* Excerpt */}
             <p className="text-lg text-muted-foreground mb-8">{post.excerpt}</p>
