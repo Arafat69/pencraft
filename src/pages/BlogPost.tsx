@@ -18,6 +18,7 @@ import {
 import Layout from "@/components/layout/Layout";
 import PostCard from "@/components/blog/PostCard";
 import Newsletter from "@/components/blog/Newsletter";
+import CommentSection from "@/components/blog/CommentSection";
 import {
   getPostBySlug,
   getRelatedPosts,
@@ -448,22 +449,7 @@ export default function BlogPost() {
               </div>
 
               {/* Comments Section */}
-              <div className="mt-12">
-                <div className="flex items-center gap-2 mb-6">
-                  <MessageCircle className="w-5 h-5 text-accent" />
-                  <h3 className="font-display text-xl font-semibold text-foreground">
-                    Comments
-                  </h3>
-                </div>
-                <div className="p-8 bg-card rounded-xl text-center">
-                  <p className="text-muted-foreground mb-4">
-                    Join the conversation! Sign in to leave a comment.
-                  </p>
-                  <Link to="/login">
-                    <Button>Sign In to Comment</Button>
-                  </Link>
-                </div>
-              </div>
+              <CommentSection postSlug={post.slug} />
             </article>
           </div>
         </div>
