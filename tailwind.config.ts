@@ -16,7 +16,8 @@ export default {
       fontFamily: {
         sans: ["DM Sans", "system-ui", "sans-serif"],
         display: ["Playfair Display", "Georgia", "serif"],
-        bengali: ["Hind Siliguri", "Noto Sans Bengali", "sans-serif"],
+        bengali: ["Tiro Bangla", "Galada", "Hind Siliguri", "Noto Sans Bengali", "sans-serif"],
+        "bengali-display": ["Galada", "Tiro Bangla", "Hind Siliguri", "sans-serif"],
       },
       colors: {
         border: "hsl(var(--border))",

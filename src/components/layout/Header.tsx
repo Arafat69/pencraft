@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X, Search, Sun, Moon, User, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -19,18 +19,22 @@ export default function Header() {
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const location = useLocation();
+  const navigate = useNavigate();
   const { theme, toggleTheme } = useTheme();
   const { user, signOut } = useAuth();
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
-      window.location.href = `/search?q=${encodeURIComponent(searchQuery)}`;
+      navigate(`/search?q=${encodeURIComponent(searchQuery)}`);
+      setSearchOpen(false);
+      setMobileMenuOpen(false);
     }
   };
 
   const handleSignOut = async () => {
     await signOut();
+    navigate("/");
   };
 
   return (
@@ -68,7 +72,7 @@ export default function Header() {
 
           {/* Actions */}
           <div className="flex items-center gap-2">
-            {/* Search */}
+            {/* Search - Desktop */}
             <AnimatePresence>
               {searchOpen && (
                 <motion.form
@@ -90,11 +94,22 @@ export default function Header() {
               )}
             </AnimatePresence>
 
+            {/* Desktop Search Button */}
             <Button
               variant="ghost"
               size="icon"
               onClick={() => setSearchOpen(!searchOpen)}
-              className="text-muted-foreground hover:text-foreground"
+              className="hidden sm:flex text-muted-foreground hover:text-foreground"
+            >
+              <Search className="h-5 w-5" />
+            </Button>
+
+            {/* Mobile Search Button - Opens menu with search */}
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setMobileMenuOpen(true)}
+              className="sm:hidden text-muted-foreground hover:text-foreground"
             >
               <Search className="h-5 w-5" />
             </Button>
@@ -115,15 +130,12 @@ export default function Header() {
 
             {/* Auth Buttons */}
             {user ? (
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleSignOut}
-                className="hidden sm:flex gap-2"
-              >
-                <LogOut className="h-4 w-4" />
-                Sign Out
-              </Button>
+              <Link to="/profile" className="hidden sm:block">
+                <Button variant="outline" size="sm" className="gap-2">
+                  <User className="h-4 w-4" />
+                  Profile
+                </Button>
+              </Link>
             ) : (
               <Link to="/auth" className="hidden sm:block">
                 <Button variant="outline" size="sm" className="gap-2">
@@ -185,19 +197,31 @@ export default function Header() {
                   </Link>
                 ))}
 
-                <div className="pt-4 border-t border-border">
+                <div className="pt-4 border-t border-border space-y-2">
                   {user ? (
-                    <Button
-                      onClick={() => {
-                        handleSignOut();
-                        setMobileMenuOpen(false);
-                      }}
-                      className="w-full"
-                      variant="outline"
-                    >
-                      <LogOut className="h-4 w-4 mr-2" />
-                      Sign Out
-                    </Button>
+                    <>
+                      <Link
+                        to="/profile"
+                        onClick={() => setMobileMenuOpen(false)}
+                        className="block"
+                      >
+                        <Button className="w-full" variant="outline">
+                          <User className="h-4 w-4 mr-2" />
+                          Profile
+                        </Button>
+                      </Link>
+                      <Button
+                        onClick={() => {
+                          handleSignOut();
+                          setMobileMenuOpen(false);
+                        }}
+                        className="w-full"
+                        variant="ghost"
+                      >
+                        <LogOut className="h-4 w-4 mr-2" />
+                        Sign Out
+                      </Button>
+                    </>
                   ) : (
                     <Link
                       to="/auth"

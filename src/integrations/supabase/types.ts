@@ -14,6 +14,27 @@ export type Database = {
   }
   public: {
     Tables: {
+      bookmarks: {
+        Row: {
+          created_at: string
+          id: string
+          post_slug: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          post_slug: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          post_slug?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       comments: {
         Row: {
           content: string
@@ -51,6 +72,27 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      post_likes: {
+        Row: {
+          created_at: string
+          id: string
+          post_slug: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          post_slug: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          post_slug?: string
+          user_id?: string
+        }
+        Relationships: []
       }
       profiles: {
         Row: {
