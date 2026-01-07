@@ -12,7 +12,6 @@ import {
   Facebook,
   ArrowLeft,
   ArrowRight,
-  MessageCircle,
   Languages,
 } from "lucide-react";
 import Layout from "@/components/layout/Layout";
@@ -29,27 +28,23 @@ import {
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { postTranslations } from "@/lib/translations";
+import { useLikesAndBookmarks } from "@/hooks/useLikesAndBookmarks";
 
 export default function BlogPost() {
   const { slug } = useParams<{ slug: string }>();
   const [readingProgress, setReadingProgress] = useState(0);
-  const [liked, setLiked] = useState(false);
-  const [bookmarked, setBookmarked] = useState(false);
   const [isBengali, setIsBengali] = useState(false);
 
   const post = getPostBySlug(slug || "");
   const relatedPosts = post ? getRelatedPosts(post, 3) : [];
+  const { liked, bookmarked, likeCount, toggleLike, toggleBookmark } =
+    useLikesAndBookmarks(slug || "");
 
   // Get previous and next posts
   const currentIndex = posts.findIndex((p) => p.slug === slug);
   const prevPost = currentIndex > 0 ? posts[currentIndex - 1] : null;
   const nextPost =
     currentIndex < posts.length - 1 ? posts[currentIndex + 1] : null;
-
-  // Scroll to top on mount
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, [slug]);
 
   // Reading progress bar
   useEffect(() => {
@@ -74,6 +69,9 @@ export default function BlogPost() {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  // Check if text contains Bengali characters
+  const isBengaliPost = post ? /[\u0980-\u09FF]/.test(post.title) : false;
 
   // Get translated title
   const postTrans = post ? postTranslations[post.id] : null;
@@ -128,18 +126,6 @@ export default function BlogPost() {
     }
 
     window.open(shareUrl, "_blank", "width=600,height=400");
-  };
-
-  const handleLike = () => {
-    setLiked(!liked);
-    toast.success(liked ? "Removed from likes" : "Added to likes!");
-  };
-
-  const handleBookmark = () => {
-    setBookmarked(!bookmarked);
-    toast.success(
-      bookmarked ? "Removed from bookmarks" : "Saved to bookmarks!"
-    );
   };
 
   // Parse markdown content to HTML (simple version)
@@ -244,7 +230,7 @@ export default function BlogPost() {
 
             {/* Title with Language Toggle */}
             <div className="relative">
-              <h1 className={`font-display text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground leading-tight mb-4 ${isBengali ? 'font-bengali' : ''}`}>
+              <h1 className={`text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground leading-tight mb-4 ${isBengaliPost || isBengali ? 'font-bengali-display' : 'font-display'}`}>
                 {displayTitle}
               </h1>
               <button
@@ -311,11 +297,11 @@ export default function BlogPost() {
       <section className="py-12 lg:py-16">
         <div className="container-blog">
           <div className="flex flex-col lg:flex-row gap-12">
-            {/* Sticky Sidebar - Social & Actions */}
-            <aside className="lg:w-16 order-2 lg:order-1">
-              <div className="lg:sticky lg:top-24 flex lg:flex-col items-center gap-3 justify-center lg:justify-start py-4 border-t lg:border-t-0 lg:border-l border-border lg:pl-0">
+            {/* Sticky Sidebar - Social & Actions (Desktop Only) */}
+            <aside className="hidden lg:block lg:w-16">
+              <div className="lg:sticky lg:top-24 flex flex-col items-center gap-3">
                 <button
-                  onClick={handleLike}
+                  onClick={toggleLike}
                   className={`p-3 rounded-full transition-colors ${
                     liked
                       ? "bg-accent text-accent-foreground"
@@ -325,11 +311,11 @@ export default function BlogPost() {
                   <Heart className={`w-5 h-5 ${liked ? "fill-current" : ""}`} />
                 </button>
                 <span className="text-sm text-muted-foreground">
-                  {formatNumber(post.likes + (liked ? 1 : 0))}
+                  {formatNumber(likeCount)}
                 </span>
 
                 <button
-                  onClick={handleBookmark}
+                  onClick={toggleBookmark}
                   className={`p-3 rounded-full transition-colors ${
                     bookmarked
                       ? "bg-primary text-primary-foreground"
@@ -341,7 +327,7 @@ export default function BlogPost() {
                   />
                 </button>
 
-                <div className="w-full h-px lg:w-px lg:h-8 bg-border my-2" />
+                <div className="w-px h-8 bg-border my-2" />
 
                 <button
                   onClick={() => handleShare("twitter")}
@@ -371,10 +357,7 @@ export default function BlogPost() {
             </aside>
 
             {/* Main Content */}
-            <article
-              id="article-content"
-              className="flex-1 max-w-3xl order-1 lg:order-2"
-            >
+            <article id="article-content" className="flex-1 max-w-3xl">
               <div className="prose-blog">{renderContent(post.content)}</div>
 
               {/* Tags */}
@@ -472,11 +455,52 @@ export default function BlogPost() {
       )}
 
       {/* Newsletter */}
-      <section className="py-12 lg:py-16">
+      <section className="py-12 lg:py-16 pb-24 lg:pb-16">
         <div className="container-blog">
           <Newsletter />
         </div>
       </section>
+
+      {/* Mobile Fixed Action Bar */}
+      <div className="fixed bottom-0 left-0 right-0 lg:hidden bg-background/95 backdrop-blur-lg border-t border-border z-40">
+        <div className="flex items-center justify-around py-3 px-4">
+          <button
+            onClick={toggleLike}
+            className={`flex flex-col items-center gap-1 px-4 py-1 rounded-lg transition-colors ${
+              liked ? "text-accent" : "text-muted-foreground"
+            }`}
+          >
+            <Heart className={`w-5 h-5 ${liked ? "fill-current" : ""}`} />
+            <span className="text-xs font-medium">{formatNumber(likeCount)}</span>
+          </button>
+
+          <button
+            onClick={toggleBookmark}
+            className={`flex flex-col items-center gap-1 px-4 py-1 rounded-lg transition-colors ${
+              bookmarked ? "text-primary" : "text-muted-foreground"
+            }`}
+          >
+            <Bookmark className={`w-5 h-5 ${bookmarked ? "fill-current" : ""}`} />
+            <span className="text-xs font-medium">Save</span>
+          </button>
+
+          <button
+            onClick={() => handleShare("twitter")}
+            className="flex flex-col items-center gap-1 px-4 py-1 rounded-lg text-muted-foreground transition-colors"
+          >
+            <Twitter className="w-5 h-5" />
+            <span className="text-xs font-medium">Tweet</span>
+          </button>
+
+          <button
+            onClick={() => handleShare("copy")}
+            className="flex flex-col items-center gap-1 px-4 py-1 rounded-lg text-muted-foreground transition-colors"
+          >
+            <Share2 className="w-5 h-5" />
+            <span className="text-xs font-medium">Share</span>
+          </button>
+        </div>
+      </div>
     </Layout>
   );
 }

@@ -9,11 +9,15 @@ interface PostCardProps {
   index?: number;
 }
 
+// Check if text contains Bengali characters
+const isBengaliText = (text: string) => /[\u0980-\u09FF]/.test(text);
+
 export default function PostCard({
   post,
   variant = "default",
   index = 0,
 }: PostCardProps) {
+  const isBengali = isBengaliText(post.title);
   if (variant === "featured") {
     return (
       <motion.article
@@ -46,10 +50,10 @@ export default function PostCard({
                 </span>
               )}
             </div>
-            <h3 className="font-display text-2xl lg:text-3xl font-semibold mb-3 line-clamp-2">
+            <h3 className={`text-2xl lg:text-3xl font-semibold mb-3 line-clamp-2 ${isBengali ? 'font-bengali-display' : 'font-display'}`}>
               {post.title}
             </h3>
-            <p className="text-primary-foreground/80 text-sm line-clamp-2 mb-4">
+            <p className={`text-primary-foreground/80 text-sm line-clamp-2 mb-4 ${isBengali ? 'font-bengali' : ''}`}>
               {post.excerpt}
             </p>
             <div className="flex items-center gap-4">
@@ -103,7 +107,7 @@ export default function PostCard({
             </span>
           </Link>
           <Link to={`/blog/${post.slug}`}>
-            <h4 className="font-display text-base font-semibold text-foreground line-clamp-2 mt-1 group-hover:text-accent transition-colors">
+            <h4 className={`text-base font-semibold text-foreground line-clamp-2 mt-1 group-hover:text-accent transition-colors ${isBengali ? 'font-bengali-display' : 'font-display'}`}>
               {post.title}
             </h4>
           </Link>
@@ -148,11 +152,11 @@ export default function PostCard({
           </Link>
         </div>
         <Link to={`/blog/${post.slug}`}>
-          <h3 className="font-display text-xl font-semibold text-foreground line-clamp-2 mb-2 group-hover:text-accent transition-colors">
+          <h3 className={`text-xl font-semibold text-foreground line-clamp-2 mb-2 group-hover:text-accent transition-colors ${isBengali ? 'font-bengali-display' : 'font-display'}`}>
             {post.title}
           </h3>
         </Link>
-        <p className="text-muted-foreground text-sm line-clamp-2 mb-4">
+        <p className={`text-muted-foreground text-sm line-clamp-2 mb-4 ${isBengali ? 'font-bengali' : ''}`}>
           {post.excerpt}
         </p>
         <div className="flex items-center justify-between">
