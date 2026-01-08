@@ -31,6 +31,7 @@ export default function CommentSection({ postSlug }: CommentSectionProps) {
   const [replyContent, setReplyContent] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitCooldown, setSubmitCooldown] = useState(false);
 
   useEffect(() => {
     fetchComments();
@@ -47,7 +48,10 @@ export default function CommentSection({ postSlug }: CommentSectionProps) {
       .order("created_at", { ascending: true });
 
     if (commentsError) {
-      console.error("Error fetching comments:", commentsError);
+      if (import.meta.env.DEV) {
+        console.error("Error fetching comments:", commentsError);
+      }
+      toast.error("Unable to load comments");
       setIsLoading(false);
       return;
     }
@@ -83,9 +87,16 @@ export default function CommentSection({ postSlug }: CommentSectionProps) {
     e.preventDefault();
     
     const content = parentId ? replyContent : newComment;
-    if (!content.trim() || !user) return;
+    if (!content.trim() || !user || submitCooldown) return;
+
+    // Validate content length (max 5000 characters)
+    if (content.length > 5000) {
+      toast.error("Comment is too long (max 5000 characters)");
+      return;
+    }
 
     setIsSubmitting(true);
+    setSubmitCooldown(true);
     
     const { error } = await supabase.from("comments").insert({
       post_slug: postSlug,
@@ -95,6 +106,9 @@ export default function CommentSection({ postSlug }: CommentSectionProps) {
     });
 
     if (error) {
+      if (import.meta.env.DEV) {
+        console.error("Error posting comment:", error);
+      }
       toast.error("Failed to post comment");
     } else {
       toast.success(parentId ? "Reply posted!" : "Comment posted!");
@@ -107,6 +121,9 @@ export default function CommentSection({ postSlug }: CommentSectionProps) {
       fetchComments();
     }
     setIsSubmitting(false);
+    
+    // 3 second cooldown between submissions
+    setTimeout(() => setSubmitCooldown(false), 3000);
   };
 
   const handleDelete = async (commentId: string) => {

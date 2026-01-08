@@ -51,7 +51,9 @@ export default function Profile() {
       .maybeSingle();
 
     if (error) {
-      console.error("Error fetching profile:", error);
+      if (import.meta.env.DEV) {
+        console.error("Error fetching profile:", error);
+      }
     } else if (data) {
       setProfile(data);
       setUsername(data.username || "");
@@ -68,7 +70,9 @@ export default function Profile() {
       .eq("user_id", user.id);
 
     if (error) {
-      console.error("Error fetching bookmarks:", error);
+      if (import.meta.env.DEV) {
+        console.error("Error fetching bookmarks:", error);
+      }
       return;
     }
 
@@ -119,8 +123,10 @@ export default function Profile() {
       );
       toast.success("Avatar updated successfully!");
     } catch (error: any) {
-      console.error("Error uploading avatar:", error);
-      toast.error(error.message || "Failed to upload avatar");
+      if (import.meta.env.DEV) {
+        console.error("Error uploading avatar:", error);
+      }
+      toast.error("Failed to upload avatar");
     } finally {
       setUploading(false);
     }
@@ -143,8 +149,10 @@ export default function Profile() {
       setProfile((prev) => (prev ? { ...prev, username } : prev));
       toast.success("Profile updated successfully!");
     } catch (error: any) {
-      console.error("Error updating profile:", error);
-      toast.error(error.message || "Failed to update profile");
+      if (import.meta.env.DEV) {
+        console.error("Error updating profile:", error);
+      }
+      toast.error("Failed to update profile");
     } finally {
       setSaving(false);
     }

@@ -72,7 +72,9 @@ export function useLikesAndBookmarks(postSlug: string) {
         toast.success("Added to likes!");
       }
     } catch (error: any) {
-      console.error("Error toggling like:", error);
+      if (import.meta.env.DEV) {
+        console.error("Error toggling like:", error);
+      }
       toast.error("Failed to update like");
     }
   };
@@ -100,7 +102,9 @@ export function useLikesAndBookmarks(postSlug: string) {
         toast.success("Saved to bookmarks!");
       }
     } catch (error: any) {
-      console.error("Error toggling bookmark:", error);
+      if (import.meta.env.DEV) {
+        console.error("Error toggling bookmark:", error);
+      }
       toast.error("Failed to update bookmark");
     }
   };
