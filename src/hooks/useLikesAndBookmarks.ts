@@ -17,13 +17,11 @@ export function useLikesAndBookmarks(postSlug: string) {
   const fetchData = async () => {
     setLoading(true);
     
-    // Get total like count
-    const { count } = await supabase
-      .from("post_likes")
-      .select("*", { count: "exact", head: true })
-      .eq("post_slug", postSlug);
+    // Get total like count using secure RPC function (doesn't expose user_ids)
+    const { data: likeCountData } = await supabase
+      .rpc("get_post_like_count", { p_post_slug: postSlug });
     
-    setLikeCount(count || 0);
+    setLikeCount(likeCountData || 0);
 
     // Check if current user liked/bookmarked
     if (user) {

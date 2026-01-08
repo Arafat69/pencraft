@@ -123,7 +123,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      get_post_like_count: { Args: { p_post_slug: string }; Returns: number }
     }
     Enums: {
       [_ in never]: never
