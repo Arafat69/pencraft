@@ -150,6 +150,9 @@ export default function Footer() {
               <Mail className="h-4 w-4" />
               Contact
             </a>
+            <Link to="/admin-login" className="hover:text-foreground transition-colors">
+              Admin
+            </Link>
           </div>
         </div>
       </div>
