@@ -1,15 +1,31 @@
 import { useParams, Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { ArrowLeft, Hash } from "lucide-react";
+import { ArrowLeft, Hash, Loader2 } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import PostCard from "@/components/blog/PostCard";
-import { getTagBySlug, getPostsByTag } from "@/lib/data";
 import { Button } from "@/components/ui/button";
+import { useTag } from "@/hooks/useTags";
+import { usePostsByTag } from "@/hooks/usePosts";
+import { mapDbTag, mapDbPost } from "@/lib/data";
 
 export default function TagPage() {
   const { slug } = useParams<{ slug: string }>();
-  const tag = getTagBySlug(slug || "");
-  const posts = getPostsByTag(slug || "");
+  const { data: dbTag, isLoading: tagLoading } = useTag(slug || "");
+  const { data: dbPosts, isLoading: postsLoading } = usePostsByTag(slug || "");
+
+  const tag = dbTag ? mapDbTag(dbTag) : null;
+  const posts = (dbPosts || []).map(mapDbPost);
+  const isLoading = tagLoading || postsLoading;
+
+  if (isLoading) {
+    return (
+      <Layout>
+        <div className="container-blog py-16 flex justify-center">
+          <Loader2 className="w-8 h-8 animate-spin text-accent" />
+        </div>
+      </Layout>
+    );
+  }
 
   if (!tag) {
     return (

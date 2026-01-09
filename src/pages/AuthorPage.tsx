@@ -1,15 +1,31 @@
 import { useParams, Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Twitter, Linkedin, ArrowLeft, FileText } from "lucide-react";
+import { Twitter, Linkedin, ArrowLeft, FileText, Globe, Loader2 } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import PostCard from "@/components/blog/PostCard";
-import { getAuthorById, getPostsByAuthor } from "@/lib/data";
 import { Button } from "@/components/ui/button";
+import { useAuthor } from "@/hooks/useAuthors";
+import { usePostsByAuthor } from "@/hooks/usePosts";
+import { mapDbAuthor, mapDbPost } from "@/lib/data";
 
 export default function AuthorPage() {
   const { id } = useParams<{ id: string }>();
-  const author = getAuthorById(id || "");
-  const posts = getPostsByAuthor(id || "");
+  const { data: dbAuthor, isLoading: authorLoading } = useAuthor(id || "");
+  const { data: dbPosts, isLoading: postsLoading } = usePostsByAuthor(id || "");
+
+  const author = dbAuthor ? mapDbAuthor(dbAuthor) : null;
+  const posts = (dbPosts || []).map(mapDbPost);
+  const isLoading = authorLoading || postsLoading;
+
+  if (isLoading) {
+    return (
+      <Layout>
+        <div className="container-blog py-16 flex justify-center">
+          <Loader2 className="w-8 h-8 animate-spin text-accent" />
+        </div>
+      </Layout>
+    );
+  }
 
   if (!author) {
     return (
@@ -54,7 +70,7 @@ export default function AuthorPage() {
               <p className="text-lg text-accent mb-4">{author.role}</p>
               <p className="text-muted-foreground max-w-xl mb-6">{author.bio}</p>
 
-              <div className="flex items-center justify-center md:justify-start gap-4">
+              <div className="flex items-center justify-center md:justify-start gap-4 flex-wrap">
                 <div className="flex items-center gap-2 text-sm text-muted-foreground">
                   <FileText className="w-4 h-4" />
                   {posts.length} articles
@@ -80,6 +96,18 @@ export default function AuthorPage() {
                   >
                     <Linkedin className="w-4 h-4" />
                     LinkedIn
+                  </a>
+                )}
+
+                {author.website && (
+                  <a
+                    href={author.website.startsWith("http") ? author.website : `https://${author.website}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
+                  >
+                    <Globe className="w-4 h-4" />
+                    Website
                   </a>
                 )}
               </div>

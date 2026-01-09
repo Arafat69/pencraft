@@ -1,15 +1,31 @@
 import { useParams, Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Loader2 } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import PostCard from "@/components/blog/PostCard";
-import { getCategoryBySlug, getPostsByCategory } from "@/lib/data";
 import { Button } from "@/components/ui/button";
+import { useCategory } from "@/hooks/useCategories";
+import { usePostsByCategory } from "@/hooks/usePosts";
+import { mapDbCategory, mapDbPost } from "@/lib/data";
 
 export default function CategoryPage() {
   const { slug } = useParams<{ slug: string }>();
-  const category = getCategoryBySlug(slug || "");
-  const posts = getPostsByCategory(slug || "");
+  const { data: dbCategory, isLoading: categoryLoading } = useCategory(slug || "");
+  const { data: dbPosts, isLoading: postsLoading } = usePostsByCategory(slug || "");
+
+  const category = dbCategory ? mapDbCategory(dbCategory) : null;
+  const posts = (dbPosts || []).map(mapDbPost);
+  const isLoading = categoryLoading || postsLoading;
+
+  if (isLoading) {
+    return (
+      <Layout>
+        <div className="container-blog py-16 flex justify-center">
+          <Loader2 className="w-8 h-8 animate-spin text-accent" />
+        </div>
+      </Layout>
+    );
+  }
 
   if (!category) {
     return (
