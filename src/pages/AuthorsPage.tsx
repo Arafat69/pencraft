@@ -1,9 +1,14 @@
 import { motion } from "framer-motion";
+import { Loader2 } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import AuthorCard from "@/components/blog/AuthorCard";
-import { authors } from "@/lib/data";
+import { useAuthors } from "@/hooks/useAuthors";
+import { mapDbAuthor } from "@/lib/data";
 
 export default function AuthorsPage() {
+  const { data: dbAuthors, isLoading } = useAuthors();
+  const authors = (dbAuthors || []).map(mapDbAuthor);
+
   return (
     <Layout>
       {/* Page Header */}
@@ -27,11 +32,21 @@ export default function AuthorsPage() {
       {/* Authors Grid */}
       <section className="py-12 lg:py-16">
         <div className="container-blog">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {authors.map((author, index) => (
-              <AuthorCard key={author.id} author={author} index={index} />
-            ))}
-          </div>
+          {isLoading ? (
+            <div className="flex justify-center py-12">
+              <Loader2 className="w-8 h-8 animate-spin text-accent" />
+            </div>
+          ) : authors.length > 0 ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              {authors.map((author, index) => (
+                <AuthorCard key={author.id} author={author} index={index} />
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-12 text-muted-foreground">
+              <p>No authors yet. Check back soon!</p>
+            </div>
+          )}
         </div>
       </section>
     </Layout>

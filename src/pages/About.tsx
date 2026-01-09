@@ -1,11 +1,21 @@
 import { motion } from "framer-motion";
-import { Mail, MapPin, Phone } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import Layout from "@/components/layout/Layout";
-import { Button } from "@/components/ui/button";
-import { useState } from "react";
-import { toast } from "sonner";
+import { useSiteSetting } from "@/hooks/useSiteSettings";
 
 export default function About() {
+  const { data: aboutContent, isLoading } = useSiteSetting("about_us");
+
+  const defaultContent = `
+## Our Mission
+To democratize knowledge sharing and provide a platform where experts and enthusiasts can share their insights with the world.
+
+## What We Cover
+From technology and design to business strategy and personal growth, our diverse team of writers brings you thoughtful perspectives on the topics that matter most.
+  `;
+
+  const content = aboutContent || defaultContent;
+
   return (
     <Layout>
       <section className="py-16 lg:py-24">
@@ -15,12 +25,21 @@ export default function About() {
             <p className="text-lg text-muted-foreground leading-relaxed mb-8">
               Pencraft is a modern publishing platform for curious minds. We believe in the power of well-crafted stories to inspire, educate, and connect people across the globe.
             </p>
-            <div className="prose-blog text-left">
-              <h2>Our Mission</h2>
-              <p>To democratize knowledge sharing and provide a platform where experts and enthusiasts can share their insights with the world.</p>
-              <h2>What We Cover</h2>
-              <p>From technology and design to business strategy and personal growth, our diverse team of writers brings you thoughtful perspectives on the topics that matter most.</p>
-            </div>
+            {isLoading ? (
+              <Loader2 className="w-6 h-6 animate-spin mx-auto text-accent" />
+            ) : (
+              <div className="prose-blog text-left whitespace-pre-wrap">
+                {content.split('\n').map((line, i) => {
+                  if (line.startsWith('## ')) {
+                    return <h2 key={i} className="font-display text-2xl font-semibold text-foreground mt-8 mb-4">{line.replace('## ', '')}</h2>;
+                  }
+                  if (line.trim()) {
+                    return <p key={i} className="text-muted-foreground mb-4">{line}</p>;
+                  }
+                  return null;
+                })}
+              </div>
+            )}
           </motion.div>
         </div>
       </section>
