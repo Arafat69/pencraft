@@ -6,6 +6,7 @@ import {
   Users,
   FileText,
   FolderOpen,
+  Tags,
   Star,
   TrendingUp,
   Info,
@@ -24,6 +25,7 @@ const sidebarLinks = [
   { name: "Authors", href: "/admin/authors", icon: Users },
   { name: "Posts", href: "/admin/posts", icon: FileText },
   { name: "Categories", href: "/admin/categories", icon: FolderOpen },
+  { name: "Tags", href: "/admin/tags", icon: Tags },
   { name: "Featured", href: "/admin/featured", icon: Star },
   { name: "Trending", href: "/admin/trending", icon: TrendingUp },
   { name: "About Us", href: "/admin/about", icon: Info },
@@ -40,6 +42,7 @@ export default function AdminDashboard() {
     posts: 0,
     authors: 0,
     categories: 0,
+    tags: 0,
   });
 
   useEffect(() => {
@@ -50,16 +53,18 @@ export default function AdminDashboard() {
 
   useEffect(() => {
     const fetchStats = async () => {
-      const [postsRes, authorsRes, categoriesRes] = await Promise.all([
+      const [postsRes, authorsRes, categoriesRes, tagsRes] = await Promise.all([
         supabase.from("posts").select("id", { count: "exact", head: true }),
         supabase.from("authors").select("id", { count: "exact", head: true }),
         supabase.from("categories").select("id", { count: "exact", head: true }),
+        supabase.from("tags").select("id", { count: "exact", head: true }),
       ]);
 
       setStats({
         posts: postsRes.count || 0,
         authors: authorsRes.count || 0,
         categories: categoriesRes.count || 0,
+        tags: tagsRes.count || 0,
       });
     };
 
@@ -193,7 +198,7 @@ export default function AdminDashboard() {
           {location.pathname === "/admin" ? (
             <div>
               <h1 className="text-2xl font-display font-bold mb-6">Dashboard</h1>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -243,6 +248,23 @@ export default function AdminDashboard() {
                     </div>
                   </div>
                 </motion.div>
+
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.3 }}
+                  className="bg-card rounded-xl p-6 border border-border"
+                >
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 bg-muted rounded-lg flex items-center justify-center">
+                      <Tags className="h-6 w-6 text-muted-foreground" />
+                    </div>
+                    <div>
+                      <p className="text-sm text-muted-foreground">Tags</p>
+                      <p className="text-2xl font-bold">{stats.tags}</p>
+                    </div>
+                  </div>
+                </motion.div>
               </div>
 
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -264,11 +286,18 @@ export default function AdminDashboard() {
                       <span>Add New Author</span>
                     </Link>
                     <Link
-                      to="/admin/categories/new"
+                      to="/admin/categories"
                       className="flex items-center gap-3 p-3 rounded-lg bg-muted hover:bg-muted/80 transition-colors"
                     >
                       <FolderOpen className="h-5 w-5" />
-                      <span>Create Category</span>
+                      <span>Manage Categories</span>
+                    </Link>
+                    <Link
+                      to="/admin/tags"
+                      className="flex items-center gap-3 p-3 rounded-lg bg-muted hover:bg-muted/80 transition-colors"
+                    >
+                      <Tags className="h-5 w-5" />
+                      <span>Manage Tags</span>
                     </Link>
                   </div>
                 </div>

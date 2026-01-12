@@ -26,6 +26,7 @@ import AuthorForm from "./pages/admin/AuthorForm";
 import PostsManager from "./pages/admin/PostsManager";
 import PostForm from "./pages/admin/PostForm";
 import CategoriesManager from "./pages/admin/CategoriesManager";
+import TagsManager from "./pages/admin/TagsManager";
 import FeaturedManager from "./pages/admin/FeaturedManager";
 import TrendingManager from "./pages/admin/TrendingManager";
 import AboutManager from "./pages/admin/AboutManager";
@@ -66,6 +67,7 @@ const App = () => (
                 <Route path="posts/new" element={<PostForm />} />
                 <Route path="posts/:id" element={<PostForm />} />
                 <Route path="categories" element={<CategoriesManager />} />
+                <Route path="tags" element={<TagsManager />} />
                 <Route path="featured" element={<FeaturedManager />} />
                 <Route path="trending" element={<TrendingManager />} />
                 <Route path="about" element={<AboutManager />} />
