@@ -1,16 +1,29 @@
 import { useState, useMemo } from "react";
-import { Link, useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Search, Filter, LayoutGrid, List, X } from "lucide-react";
+import { Search, Filter, LayoutGrid, List, X, Loader2 } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import PostCard from "@/components/blog/PostCard";
-import { posts, categories, tags } from "@/lib/data";
 import { Button } from "@/components/ui/button";
+import { usePosts } from "@/hooks/usePosts";
+import { useCategories } from "@/hooks/useCategories";
+import { useTags } from "@/hooks/useTags";
+import { mapDbPost, mapDbCategory, mapDbTag } from "@/lib/data";
 
 export default function BlogList() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [showFilters, setShowFilters] = useState(false);
+
+  const { data: dbPosts, isLoading: postsLoading } = usePosts();
+  const { data: dbCategories, isLoading: categoriesLoading } = useCategories();
+  const { data: dbTags, isLoading: tagsLoading } = useTags();
+
+  const posts = useMemo(() => (dbPosts || []).map(mapDbPost), [dbPosts]);
+  const categories = useMemo(() => (dbCategories || []).map(mapDbCategory), [dbCategories]);
+  const tags = useMemo(() => (dbTags || []).map(mapDbTag), [dbTags]);
+
+  const isLoading = postsLoading || categoriesLoading || tagsLoading;
 
   const searchQuery = searchParams.get("q") || "";
   const selectedCategory = searchParams.get("category") || "";
@@ -67,7 +80,7 @@ export default function BlogList() {
     }
 
     return filtered;
-  }, [searchQuery, selectedCategory, selectedTag, sortBy]);
+  }, [posts, searchQuery, selectedCategory, selectedTag, sortBy]);
 
   const updateFilter = (key: string, value: string) => {
     const newParams = new URLSearchParams(searchParams);
@@ -289,12 +302,15 @@ export default function BlogList() {
 
           {/* Results Count */}
           <p className="text-sm text-muted-foreground mb-6">
-            Showing {filteredPosts.length} article
-            {filteredPosts.length !== 1 ? "s" : ""}
+            {isLoading ? "Loading..." : `Showing ${filteredPosts.length} article${filteredPosts.length !== 1 ? "s" : ""}`}
           </p>
 
           {/* Posts Grid/List */}
-          {filteredPosts.length > 0 ? (
+          {isLoading ? (
+            <div className="flex justify-center py-12">
+              <Loader2 className="w-8 h-8 animate-spin text-accent" />
+            </div>
+          ) : filteredPosts.length > 0 ? (
             <div
               className={
                 viewMode === "grid"
@@ -320,12 +336,15 @@ export default function BlogList() {
                 No articles found
               </h3>
               <p className="text-muted-foreground mb-4">
-                Try adjusting your search or filters to find what you're looking
-                for.
+                {posts.length === 0 
+                  ? "No articles yet. Check back soon!"
+                  : "Try adjusting your search or filters to find what you're looking for."}
               </p>
-              <Button variant="outline" onClick={clearFilters}>
-                Clear Filters
-              </Button>
+              {hasActiveFilters && (
+                <Button variant="outline" onClick={clearFilters}>
+                  Clear Filters
+                </Button>
+              )}
             </div>
           )}
         </div>

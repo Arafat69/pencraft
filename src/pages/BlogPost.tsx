@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useParams, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
@@ -13,30 +13,39 @@ import {
   ArrowLeft,
   ArrowRight,
   Languages,
+  Loader2,
 } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import PostCard from "@/components/blog/PostCard";
 import Newsletter from "@/components/blog/Newsletter";
 import CommentSection from "@/components/blog/CommentSection";
-import {
-  getPostBySlug,
-  getRelatedPosts,
-  formatDate,
-  formatNumber,
-  posts,
-} from "@/lib/data";
+import { formatDate, formatNumber, mapDbPost } from "@/lib/data";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { postTranslations } from "@/lib/translations";
 import { useLikesAndBookmarks } from "@/hooks/useLikesAndBookmarks";
+import { usePosts } from "@/hooks/usePosts";
 
 export default function BlogPost() {
   const { slug } = useParams<{ slug: string }>();
   const [readingProgress, setReadingProgress] = useState(0);
   const [isBengali, setIsBengali] = useState(false);
 
-  const post = getPostBySlug(slug || "");
-  const relatedPosts = post ? getRelatedPosts(post, 3) : [];
+  const { data: dbPosts, isLoading } = usePosts();
+  const posts = useMemo(() => (dbPosts || []).map(mapDbPost), [dbPosts]);
+  
+  const post = posts.find((p) => p.slug === slug);
+  const relatedPosts = post
+    ? posts
+        .filter(
+          (p) =>
+            p.id !== post.id &&
+            (p.category.id === post.category.id ||
+              p.tags.some((t) => post.tags.some((pt) => pt.id === t.id)))
+        )
+        .slice(0, 3)
+    : [];
+
   const { liked, bookmarked, likeCount, toggleLike, toggleBookmark } =
     useLikesAndBookmarks(slug || "");
 
@@ -76,6 +85,17 @@ export default function BlogPost() {
   // Get translated title
   const postTrans = post ? postTranslations[post.id] : null;
   const displayTitle = isBengali && postTrans ? postTrans.title : post?.title;
+
+  if (isLoading) {
+    return (
+      <Layout>
+        <div className="container-blog py-16 text-center">
+          <Loader2 className="w-8 h-8 animate-spin text-accent mx-auto" />
+          <p className="text-muted-foreground mt-4">Loading article...</p>
+        </div>
+      </Layout>
+    );
+  }
 
   if (!post) {
     return (
@@ -485,16 +505,8 @@ export default function BlogPost() {
           </button>
 
           <button
-            onClick={() => handleShare("twitter")}
-            className="flex flex-col items-center gap-1 px-4 py-1 rounded-lg text-muted-foreground transition-colors"
-          >
-            <Twitter className="w-5 h-5" />
-            <span className="text-xs font-medium">Tweet</span>
-          </button>
-
-          <button
             onClick={() => handleShare("copy")}
-            className="flex flex-col items-center gap-1 px-4 py-1 rounded-lg text-muted-foreground transition-colors"
+            className="flex flex-col items-center gap-1 px-4 py-1 rounded-lg text-muted-foreground"
           >
             <Share2 className="w-5 h-5" />
             <span className="text-xs font-medium">Share</span>
