@@ -24,7 +24,7 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { postTranslations } from "@/lib/translations";
 import { useLikesAndBookmarks } from "@/hooks/useLikesAndBookmarks";
-import { usePosts } from "@/hooks/usePosts";
+import { usePost, usePosts } from "@/hooks/usePosts";
 
 export default function BlogPost() {
   const { slug } = useParams<{ slug: string }>();
@@ -148,8 +148,80 @@ export default function BlogPost() {
     window.open(shareUrl, "_blank", "width=600,height=400");
   };
 
-  // Parse markdown content to HTML (simple version)
+  // Parse and render content (supports both old markdown and new JSON blocks)
   const renderContent = (content: string) => {
+    // Try to parse as JSON blocks first
+    try {
+      const blocks = JSON.parse(content);
+      if (Array.isArray(blocks)) {
+        return blocks.map((block: { id: string; type: string; content: string; imageUrl?: string; caption?: string }, i: number) => {
+          switch (block.type) {
+            case "heading1":
+              return (
+                <h2
+                  key={block.id || i}
+                  className="font-bengali-display text-2xl lg:text-3xl font-bold text-foreground mt-10 mb-4"
+                >
+                  {block.content}
+                </h2>
+              );
+            case "heading2":
+              return (
+                <h3
+                  key={block.id || i}
+                  className="font-bengali-display text-xl lg:text-2xl font-semibold text-foreground mt-8 mb-3"
+                >
+                  {block.content}
+                </h3>
+              );
+            case "paragraph":
+              return (
+                <p
+                  key={block.id || i}
+                  className="font-bengali text-foreground/85 leading-relaxed mb-4 text-lg"
+                >
+                  {block.content}
+                </p>
+              );
+            case "quote":
+              return (
+                <blockquote
+                  key={block.id || i}
+                  className="border-l-4 border-accent pl-4 py-2 my-6 italic text-muted-foreground font-bengali"
+                >
+                  <p>{block.content}</p>
+                  {block.caption && (
+                    <cite className="block mt-2 text-sm not-italic">— {block.caption}</cite>
+                  )}
+                </blockquote>
+              );
+            case "image":
+              return (
+                <figure key={block.id || i} className="my-8">
+                  {block.imageUrl && (
+                    <img
+                      src={block.imageUrl}
+                      alt={block.caption || "Content image"}
+                      className="w-full rounded-lg"
+                    />
+                  )}
+                  {block.caption && (
+                    <figcaption className="text-center text-sm text-muted-foreground mt-2 font-bengali">
+                      {block.caption}
+                    </figcaption>
+                  )}
+                </figure>
+              );
+            default:
+              return null;
+          }
+        });
+      }
+    } catch {
+      // Fall back to markdown parsing for old content
+    }
+
+    // Legacy markdown parsing
     return content
       .split("\n")
       .map((line, i) => {
@@ -158,7 +230,7 @@ export default function BlogPost() {
           return (
             <h2
               key={i}
-              className="font-display text-2xl lg:text-3xl font-semibold text-foreground mt-10 mb-4"
+              className="font-bengali-display text-2xl lg:text-3xl font-semibold text-foreground mt-10 mb-4"
             >
               {line.replace("## ", "")}
             </h2>
@@ -168,7 +240,7 @@ export default function BlogPost() {
           return (
             <h3
               key={i}
-              className="font-display text-xl lg:text-2xl font-semibold text-foreground mt-8 mb-3"
+              className="font-bengali-display text-xl lg:text-2xl font-semibold text-foreground mt-8 mb-3"
             >
               {line.replace("### ", "")}
             </h3>
@@ -179,7 +251,7 @@ export default function BlogPost() {
           return (
             <blockquote
               key={i}
-              className="border-l-4 border-accent pl-4 py-2 my-6 italic text-muted-foreground"
+              className="border-l-4 border-accent pl-4 py-2 my-6 italic text-muted-foreground font-bengali"
             >
               {line.replace("> ", "")}
             </blockquote>
@@ -188,14 +260,14 @@ export default function BlogPost() {
         // List items
         if (line.startsWith("- ")) {
           return (
-            <li key={i} className="ml-4 text-foreground/85">
+            <li key={i} className="ml-4 text-foreground/85 font-bengali">
               {line.replace("- ", "")}
             </li>
           );
         }
         if (line.match(/^\d+\. /)) {
           return (
-            <li key={i} className="ml-4 text-foreground/85">
+            <li key={i} className="ml-4 text-foreground/85 font-bengali">
               {line.replace(/^\d+\. /, "")}
             </li>
           );
@@ -207,7 +279,7 @@ export default function BlogPost() {
         // Regular paragraph
         if (line.trim()) {
           return (
-            <p key={i} className="text-foreground/85 leading-relaxed mb-4">
+            <p key={i} className="font-bengali text-foreground/85 leading-relaxed mb-4">
               {line}
             </p>
           );

@@ -1,11 +1,10 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { motion } from "framer-motion";
-import { ArrowLeft, Loader2, Upload, Image as ImageIcon } from "lucide-react";
+import { ArrowLeft, Loader2, Image as ImageIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import {
   Select,
@@ -17,12 +16,13 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { z } from "zod";
+import TagSelector from "@/components/admin/TagSelector";
+import RichContentEditor, { ContentBlock } from "@/components/admin/RichContentEditor";
 
 const postSchema = z.object({
   title: z.string().min(1, "Title is required").max(200),
   slug: z.string().min(1, "Slug is required").max(200),
   excerpt: z.string().max(500).optional(),
-  content: z.string().optional(),
   read_time: z.string().max(50).optional(),
 });
 
@@ -47,11 +47,12 @@ export default function PostForm() {
   const [uploading, setUploading] = useState(false);
   const [authors, setAuthors] = useState<Author[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  const [contentBlocks, setContentBlocks] = useState<ContentBlock[]>([]);
   const [formData, setFormData] = useState({
     title: "",
     slug: "",
     excerpt: "",
-    content: "",
     cover_image: "",
     author_id: "",
     category_id: "",
@@ -87,7 +88,6 @@ export default function PostForm() {
             title: data.title || "",
             slug: data.slug || "",
             excerpt: data.excerpt || "",
-            content: data.content || "",
             cover_image: data.cover_image || "",
             author_id: data.author_id || "",
             category_id: data.category_id || "",
@@ -96,6 +96,38 @@ export default function PostForm() {
             read_time: data.read_time || "5 min read",
             published: !!data.published_at,
           });
+
+          // Parse content blocks from JSON
+          try {
+            if (data.content) {
+              const parsed = JSON.parse(data.content);
+              if (Array.isArray(parsed)) {
+                setContentBlocks(parsed);
+              } else {
+                // Convert old text content to a paragraph block
+                setContentBlocks([
+                  { id: crypto.randomUUID(), type: "paragraph", content: data.content }
+                ]);
+              }
+            }
+          } catch {
+            // Old plain text content
+            if (data.content) {
+              setContentBlocks([
+                { id: crypto.randomUUID(), type: "paragraph", content: data.content }
+              ]);
+            }
+          }
+
+          // Fetch existing tags
+          const { data: postTags } = await supabase
+            .from("post_tags")
+            .select("tag_id")
+            .eq("post_id", id);
+
+          if (postTags) {
+            setSelectedTags(postTags.map((pt) => pt.tag_id));
+          }
         }
       }
       setLoading(false);
@@ -117,7 +149,7 @@ export default function PostForm() {
     if (name === "title" && !isEditing) {
       const slug = value
         .toLowerCase()
-        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/[^a-z0-9\u0980-\u09FF]+/g, "-")
         .replace(/(^-|-$)/g, "");
       setFormData((prev) => ({ ...prev, slug }));
     }
@@ -188,11 +220,14 @@ export default function PostForm() {
 
     setSaving(true);
 
+    // Serialize content blocks to JSON
+    const contentJson = JSON.stringify(contentBlocks);
+
     const postData = {
       title: formData.title,
       slug: formData.slug,
       excerpt: formData.excerpt || null,
-      content: formData.content || null,
+      content: contentJson,
       cover_image: formData.cover_image || null,
       author_id: formData.author_id || null,
       category_id: formData.category_id || null,
@@ -201,6 +236,8 @@ export default function PostForm() {
       read_time: formData.read_time || "5 min read",
       published_at: formData.published ? new Date().toISOString() : null,
     };
+
+    let postId = id;
 
     if (isEditing) {
       const { error } = await supabase
@@ -215,12 +252,15 @@ export default function PostForm() {
           description: error.message.includes("unique") ? "Slug already exists" : "Please try again",
           variant: "destructive",
         });
-      } else {
-        toast({ title: "Post updated successfully" });
-        navigate("/admin/posts");
+        setSaving(false);
+        return;
       }
     } else {
-      const { error } = await supabase.from("posts").insert([postData]);
+      const { data, error } = await supabase
+        .from("posts")
+        .insert([postData])
+        .select("id")
+        .single();
 
       if (error) {
         if (import.meta.env.DEV) console.error("Insert error:", error);
@@ -229,12 +269,29 @@ export default function PostForm() {
           description: error.message.includes("unique") ? "Slug already exists" : "Please try again",
           variant: "destructive",
         });
-      } else {
-        toast({ title: "Post created successfully" });
-        navigate("/admin/posts");
+        setSaving(false);
+        return;
+      }
+      postId = data.id;
+    }
+
+    // Update tags
+    if (postId) {
+      // Remove existing tags
+      await supabase.from("post_tags").delete().eq("post_id", postId);
+
+      // Add new tags
+      if (selectedTags.length > 0) {
+        const tagInserts = selectedTags.map((tagId) => ({
+          post_id: postId,
+          tag_id: tagId,
+        }));
+        await supabase.from("post_tags").insert(tagInserts);
       }
     }
 
+    toast({ title: isEditing ? "Post updated successfully" : "Post created successfully" });
+    navigate("/admin/posts");
     setSaving(false);
   };
 
@@ -269,7 +326,7 @@ export default function PostForm() {
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Cover Image */}
           <div className="space-y-2">
-            <Label>Cover Image</Label>
+            <Label>Cover Image (Main Image)</Label>
             {formData.cover_image ? (
               <div className="relative aspect-video rounded-lg overflow-hidden bg-muted">
                 <img
@@ -331,7 +388,8 @@ export default function PostForm() {
                 name="title"
                 value={formData.title}
                 onChange={handleChange}
-                placeholder="Post title"
+                placeholder="Post title / পোস্টের শিরোনাম"
+                className="font-bengali"
               />
               {errors.title && (
                 <p className="text-sm text-destructive">{errors.title}</p>
@@ -354,28 +412,19 @@ export default function PostForm() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="excerpt">Excerpt</Label>
-            <Textarea
+            <Label htmlFor="excerpt">Excerpt / সংক্ষিপ্ত বিবরণ</Label>
+            <Input
               id="excerpt"
               name="excerpt"
               value={formData.excerpt}
               onChange={handleChange}
               placeholder="Short description of the post"
-              rows={2}
+              className="font-bengali"
             />
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="content">Content</Label>
-            <Textarea
-              id="content"
-              name="content"
-              value={formData.content}
-              onChange={handleChange}
-              placeholder="Full post content (supports markdown)"
-              rows={12}
-            />
-          </div>
+          {/* Rich Content Editor */}
+          <RichContentEditor blocks={contentBlocks} onChange={setContentBlocks} />
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="space-y-2">
@@ -431,6 +480,13 @@ export default function PostForm() {
               />
             </div>
           </div>
+
+          {/* Tag Selector */}
+          <TagSelector
+            postId={isEditing ? id : undefined}
+            selectedTags={selectedTags}
+            onChange={setSelectedTags}
+          />
 
           <div className="flex flex-wrap gap-6">
             <div className="flex items-center gap-3">
