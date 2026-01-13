@@ -33,14 +33,15 @@ export default function BlogList() {
   const filteredPosts = useMemo(() => {
     let filtered = [...posts];
 
-    // Search filter
+    // Search filter - includes tag matching
     if (searchQuery) {
       const query = searchQuery.toLowerCase();
       filtered = filtered.filter(
         (post) =>
           post.title.toLowerCase().includes(query) ||
           post.excerpt.toLowerCase().includes(query) ||
-          post.content.toLowerCase().includes(query)
+          post.content.toLowerCase().includes(query) ||
+          post.tags.some((tag) => tag.name.toLowerCase().includes(query))
       );
     }
 

@@ -122,7 +122,7 @@
   }
 
   body.font-bengali {
-    font-family: "Tiro Bangla", "Hind Siliguri", "Noto Sans Bengali", sans-serif;
+    font-family: "Anek Bangla", "Hind Siliguri", sans-serif;
   }
 
   body.font-bengali h1,
@@ -131,15 +131,15 @@
   body.font-bengali h4,
   body.font-bengali h5,
   body.font-bengali h6 {
-    font-family: "Galada", "Tiro Bangla", "Hind Siliguri", sans-serif;
+    font-family: "Noto Serif Bengali", "Anek Bangla", serif;
   }
 
   .font-bengali {
-    font-family: "Tiro Bangla", "Hind Siliguri", "Noto Sans Bengali", sans-serif;
+    font-family: "Anek Bangla", "Hind Siliguri", sans-serif;
   }
   
   .font-bengali-display {
-    font-family: "Galada", "Tiro Bangla", "Hind Siliguri", sans-serif;
+    font-family: "Noto Serif Bengali", "Anek Bangla", serif;
   }
 
   h1, h2, h3, h4, h5, h6 {
