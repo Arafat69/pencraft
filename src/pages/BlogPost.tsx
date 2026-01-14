@@ -35,15 +35,26 @@ export default function BlogPost() {
   const posts = useMemo(() => (dbPosts || []).map(mapDbPost), [dbPosts]);
   
   const post = posts.find((p) => p.slug === slug);
-  const relatedPosts = post
+  // Calculate suggested posts based on matching tags (prioritized) or category
+  const suggestedPosts = post
     ? posts
-        .filter(
-          (p) =>
-            p.id !== post.id &&
-            (p.category.id === post.category.id ||
-              p.tags.some((t) => post.tags.some((pt) => pt.id === t.id)))
-        )
-        .slice(0, 3)
+        .filter((p) => p.id !== post.id)
+        .map((p) => {
+          // Count matching tags
+          const matchingTags = p.tags.filter((t) =>
+            post.tags.some((pt) => pt.id === t.id)
+          );
+          const tagScore = matchingTags.length;
+          const categoryMatch = p.category.id === post.category.id ? 1 : 0;
+          return { ...p, matchingTags, tagScore, categoryMatch };
+        })
+        .filter((p) => p.tagScore > 0 || p.categoryMatch > 0) // Only include if there's at least one match
+        .sort((a, b) => {
+          // Prioritize by tag matches first, then category
+          if (b.tagScore !== a.tagScore) return b.tagScore - a.tagScore;
+          return b.categoryMatch - a.categoryMatch;
+        })
+        .slice(0, 4) // Show 4 suggested articles
     : [];
 
   const { liked, bookmarked, likeCount, toggleLike, toggleBookmark } =
@@ -530,16 +541,78 @@ export default function BlogPost() {
         </div>
       </section>
 
-      {/* Related Posts */}
-      {relatedPosts.length > 0 && (
+      {/* Suggested Articles - Based on Matching Tags */}
+      {suggestedPosts.length > 0 && (
         <section className="py-12 lg:py-16 bg-secondary/30">
           <div className="container-blog">
-            <h2 className="font-display text-2xl lg:text-3xl font-semibold text-foreground mb-8">
-              Related Articles
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {relatedPosts.map((relatedPost, index) => (
-                <PostCard key={relatedPost.id} post={relatedPost} index={index} />
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
+              <div>
+                <h2 className="font-display text-2xl lg:text-3xl font-semibold text-foreground">
+                  আপনার জন্য সাজেস্টেড আর্টিকেল
+                </h2>
+                <p className="text-muted-foreground mt-1">
+                  একই ট্যাগ ও ক্যাটাগরির উপর ভিত্তি করে
+                </p>
+              </div>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              {suggestedPosts.map((suggestedPost, index) => (
+                <motion.div
+                  key={suggestedPost.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.1 }}
+                  className="group"
+                >
+                  <Link to={`/blog/${suggestedPost.slug}`} className="block">
+                    <div className="relative aspect-[4/3] rounded-xl overflow-hidden mb-3">
+                      <img
+                        src={suggestedPost.featuredImage}
+                        alt={suggestedPost.title}
+                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                      
+                      {/* Matching Tags Badge */}
+                      {suggestedPost.matchingTags.length > 0 && (
+                        <div className="absolute top-3 right-3 flex flex-wrap gap-1 justify-end max-w-[60%]">
+                          {suggestedPost.matchingTags.slice(0, 2).map((tag) => (
+                            <span
+                              key={tag.id}
+                              className="px-2 py-0.5 bg-accent text-accent-foreground text-xs font-medium rounded-full"
+                            >
+                              #{tag.name}
+                            </span>
+                          ))}
+                          {suggestedPost.matchingTags.length > 2 && (
+                            <span className="px-2 py-0.5 bg-muted text-muted-foreground text-xs font-medium rounded-full">
+                              +{suggestedPost.matchingTags.length - 2}
+                            </span>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                    
+                    <div className="space-y-2">
+                      <span
+                        className="text-xs font-medium"
+                        style={{ color: suggestedPost.category.color || 'var(--accent)' }}
+                      >
+                        {suggestedPost.category.name}
+                      </span>
+                      <h3 className="font-bengali-display font-semibold text-foreground line-clamp-2 group-hover:text-accent transition-colors">
+                        {suggestedPost.title}
+                      </h3>
+                      <p className="font-bengali text-sm text-muted-foreground line-clamp-2">
+                        {suggestedPost.excerpt}
+                      </p>
+                      <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                        <Clock className="w-3 h-3" />
+                        <span>{suggestedPost.readingTime} মিনিট</span>
+                      </div>
+                    </div>
+                  </Link>
+                </motion.div>
               ))}
             </div>
           </div>
