@@ -31,6 +31,8 @@ import FeaturedManager from "./pages/admin/FeaturedManager";
 import TrendingManager from "./pages/admin/TrendingManager";
 import AboutManager from "./pages/admin/AboutManager";
 import SettingsManager from "./pages/admin/SettingsManager";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+import Terms from "./pages/Terms";
 
 const queryClient = new QueryClient();
 
@@ -54,6 +56,8 @@ const App = () => (
               <Route path="/author/:id" element={<AuthorPage />} />
               <Route path="/about" element={<About />} />
               <Route path="/contact" element={<Contact />} />
+              <Route path="/privacy" element={<PrivacyPolicy />} />
+              <Route path="/terms" element={<Terms />} />
               <Route path="/auth" element={<Auth />} />
               <Route path="/login" element={<Auth />} />
               <Route path="/profile" element={<Profile />} />

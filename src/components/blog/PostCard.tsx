@@ -35,44 +35,14 @@ export default function PostCard({
               loading="lazy"
             />
           </div>
-          <div className="absolute inset-0 bg-gradient-to-t from-foreground/80 via-foreground/20 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-foreground/90 via-foreground/30 to-transparent" />
           <div className="absolute bottom-0 left-0 right-0 p-6 text-primary-foreground">
-            <div className="flex items-center gap-2 mb-3">
-              <span
-                className="px-3 py-1 text-xs font-medium rounded-full"
-                style={{ backgroundColor: post.category.color }}
-              >
-                {post.category.name}
-              </span>
-              {post.trending && (
-                <span className="px-3 py-1 text-xs font-medium rounded-full bg-accent text-accent-foreground">
-                  Trending
-                </span>
-              )}
-            </div>
-            <h3 className={`text-2xl lg:text-3xl font-semibold mb-3 line-clamp-2 ${isBengali ? 'font-bengali-display' : 'font-display'}`}>
+            <h3 className={`text-2xl lg:text-3xl font-semibold mb-2 line-clamp-2 ${isBengali ? 'font-bengali-display' : 'font-display'}`}>
               {post.title}
             </h3>
-            <p className={`text-primary-foreground/80 text-sm line-clamp-2 mb-4 ${isBengali ? 'font-bengali' : ''}`}>
+            <p className={`text-primary-foreground/80 text-sm line-clamp-2 ${isBengali ? 'font-bengali' : ''}`}>
               {post.excerpt}
             </p>
-            <div className="flex items-center gap-4">
-              <img
-                src={post.author.avatar}
-                alt={post.author.name}
-                className="w-8 h-8 rounded-full object-cover"
-              />
-              <div className="flex items-center gap-4 text-sm text-primary-foreground/70">
-                <span>{post.author.name}</span>
-                <span>·</span>
-                <span>{formatDate(post.publishedAt)}</span>
-                <span>·</span>
-                <span className="flex items-center gap-1">
-                  <Clock className="w-4 h-4" />
-                  {post.readingTime} min read
-                </span>
-              </div>
-            </div>
           </div>
         </Link>
       </motion.article>

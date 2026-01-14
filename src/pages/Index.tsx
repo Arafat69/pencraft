@@ -87,7 +87,7 @@ export default function Index() {
               </div>
               <Link
                 to="/blog"
-                className="hidden sm:flex items-center gap-1 text-sm font-medium text-accent hover:underline"
+                className="flex items-center gap-1 text-sm font-medium text-accent hover:underline"
               >
                 View All
                 <ArrowRight className="w-4 h-4" />
@@ -118,7 +118,7 @@ export default function Index() {
               </h2>
               <Link
                 to="/categories"
-                className="hidden sm:flex items-center gap-1 text-sm font-medium text-accent hover:underline"
+                className="flex items-center gap-1 text-sm font-medium text-accent hover:underline"
               >
                 All Categories
                 <ArrowRight className="w-4 h-4" />
@@ -147,7 +147,7 @@ export default function Index() {
                   </h2>
                   <Link
                     to="/blog"
-                    className="hidden sm:flex items-center gap-1 text-sm font-medium text-accent hover:underline"
+                    className="flex items-center gap-1 text-sm font-medium text-accent hover:underline"
                   >
                     View All
                     <ArrowRight className="w-4 h-4" />
