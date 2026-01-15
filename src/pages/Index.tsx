@@ -7,13 +7,13 @@ import PostCard from "@/components/blog/PostCard";
 import CategoryCard from "@/components/blog/CategoryCard";
 import AuthorCard from "@/components/blog/AuthorCard";
 import Newsletter from "@/components/blog/Newsletter";
+import HeroIllustration from "@/components/HeroIllustration";
 import { usePosts, useFeaturedPosts, useTrendingPosts } from "@/hooks/usePosts";
 import { useCategories } from "@/hooks/useCategories";
 import { useAuthors } from "@/hooks/useAuthors";
 import { mapDbPost, mapDbCategory, mapDbAuthor, formatNumber } from "@/lib/data";
 import { useRealtimeStats } from "@/hooks/useRealtimeStats";
 import { Button } from "@/components/ui/button";
-
 export default function Index() {
   const { data: dbPosts, isLoading: postsLoading } = usePosts();
   const { data: dbFeaturedPosts, isLoading: featuredLoading } = useFeaturedPosts();
@@ -50,37 +50,50 @@ export default function Index() {
       <section className="relative overflow-hidden py-16 lg:py-24">
         <div className="absolute inset-0 bg-gradient-to-b from-secondary/50 to-background" />
         <div className="container-blog relative">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="max-w-3xl"
-          >
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent/10 text-accent text-sm font-medium mb-6">
-              <Sparkles className="w-4 h-4" />
-              Welcome to Pencraft
-            </div>
-            <h1 className="font-display text-4xl sm:text-5xl lg:text-6xl font-bold text-foreground leading-tight mb-6">
-              Stories that inspire, ideas that matter
-            </h1>
-            <p className="text-lg lg:text-xl text-muted-foreground leading-relaxed mb-8 max-w-2xl">
-              Discover thoughtfully crafted articles on design, technology, lifestyle, and more. Join our community of curious minds.
-            </p>
-            <div className="flex flex-wrap gap-4">
-              <Link
-                to="/blog"
-                className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-primary-foreground rounded-lg font-medium hover:opacity-90 transition-opacity"
-              >
-                Explore Articles
-                <ArrowRight className="w-4 h-4" />
-              </Link>
-              <Link
-                to="/about"
-                className="inline-flex items-center gap-2 px-6 py-3 bg-secondary text-secondary-foreground rounded-lg font-medium hover:bg-muted transition-colors"
-              >
-                About Us
-              </Link>
-            </div>
-          </motion.div>
+          <div className="flex flex-col lg:flex-row items-center gap-8 lg:gap-12">
+            {/* Left Content */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="flex-1 max-w-2xl"
+            >
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent/10 text-accent text-sm font-medium mb-6">
+                <Sparkles className="w-4 h-4" />
+                Welcome to Pencraft
+              </div>
+              <h1 className="font-display text-4xl sm:text-5xl lg:text-6xl font-bold text-foreground leading-tight mb-6">
+                Stories that inspire, ideas that matter
+              </h1>
+              <p className="text-lg lg:text-xl text-muted-foreground leading-relaxed mb-8">
+                Discover thoughtfully crafted articles on design, technology, lifestyle, and more. Join our community of curious minds.
+              </p>
+              <div className="flex flex-wrap gap-4">
+                <Link
+                  to="/blog"
+                  className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-primary-foreground rounded-lg font-medium hover:opacity-90 transition-opacity"
+                >
+                  Explore Articles
+                  <ArrowRight className="w-4 h-4" />
+                </Link>
+                <Link
+                  to="/about"
+                  className="inline-flex items-center gap-2 px-6 py-3 bg-secondary text-secondary-foreground rounded-lg font-medium hover:bg-muted transition-colors"
+                >
+                  About Us
+                </Link>
+              </div>
+            </motion.div>
+
+            {/* Right Illustration - Hidden on mobile, visible on larger screens */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.2, duration: 0.5 }}
+              className="hidden lg:block flex-1"
+            >
+              <HeroIllustration />
+            </motion.div>
+          </div>
         </div>
       </section>
 

@@ -64,23 +64,24 @@
   }
 
   .dark {
-    --background: 220 20% 8%;
+    /* Enhanced deep dark theme */
+    --background: 220 25% 4%;
     --foreground: 40 20% 95%;
 
-    --card: 220 18% 12%;
+    --card: 220 22% 7%;
     --card-foreground: 40 20% 95%;
 
-    --popover: 220 18% 12%;
+    --popover: 220 22% 7%;
     --popover-foreground: 40 20% 95%;
 
     --primary: 40 20% 95%;
-    --primary-foreground: 220 20% 8%;
+    --primary-foreground: 220 25% 4%;
 
-    --secondary: 220 15% 18%;
+    --secondary: 220 20% 10%;
     --secondary-foreground: 40 20% 95%;
 
-    --muted: 220 15% 20%;
-    --muted-foreground: 220 10% 60%;
+    --muted: 220 20% 12%;
+    --muted-foreground: 220 10% 55%;
 
     --accent: 15 80% 55%;
     --accent-foreground: 0 0% 100%;
@@ -88,22 +89,22 @@
     --destructive: 0 70% 50%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 220 15% 20%;
-    --input: 220 15% 20%;
+    --border: 220 20% 12%;
+    --input: 220 20% 12%;
     --ring: 40 20% 95%;
 
-    --gradient-warm: linear-gradient(135deg, hsl(220 18% 12%) 0%, hsl(220 20% 8%) 100%);
-    --gradient-hero: linear-gradient(180deg, hsl(220 20% 8%) 0%, hsl(220 18% 14%) 100%);
-    --shadow-soft: 0 4px 20px -4px hsl(0 0% 0% / 0.3);
-    --shadow-elevated: 0 12px 40px -8px hsl(0 0% 0% / 0.4);
+    --gradient-warm: linear-gradient(135deg, hsl(220 22% 7%) 0%, hsl(220 25% 4%) 100%);
+    --gradient-hero: linear-gradient(180deg, hsl(220 25% 4%) 0%, hsl(220 22% 8%) 100%);
+    --shadow-soft: 0 4px 20px -4px hsl(0 0% 0% / 0.5);
+    --shadow-elevated: 0 12px 40px -8px hsl(0 0% 0% / 0.6);
 
-    --sidebar-background: 220 18% 10%;
+    --sidebar-background: 220 22% 5%;
     --sidebar-foreground: 40 20% 95%;
     --sidebar-primary: 40 20% 95%;
-    --sidebar-primary-foreground: 220 20% 8%;
-    --sidebar-accent: 220 15% 18%;
+    --sidebar-primary-foreground: 220 25% 4%;
+    --sidebar-accent: 220 20% 10%;
     --sidebar-accent-foreground: 40 20% 95%;
-    --sidebar-border: 220 15% 18%;
+    --sidebar-border: 220 20% 10%;
     --sidebar-ring: 40 20% 95%;
   }
 }

@@ -29,6 +29,7 @@ import CategoriesManager from "./pages/admin/CategoriesManager";
 import TagsManager from "./pages/admin/TagsManager";
 import FeaturedManager from "./pages/admin/FeaturedManager";
 import TrendingManager from "./pages/admin/TrendingManager";
+import NoticesManager from "./pages/admin/NoticesManager";
 import AboutManager from "./pages/admin/AboutManager";
 import SettingsManager from "./pages/admin/SettingsManager";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
@@ -74,6 +75,7 @@ const App = () => (
                 <Route path="tags" element={<TagsManager />} />
                 <Route path="featured" element={<FeaturedManager />} />
                 <Route path="trending" element={<TrendingManager />} />
+                <Route path="notices" element={<NoticesManager />} />
                 <Route path="about" element={<AboutManager />} />
                 <Route path="settings" element={<SettingsManager />} />
               </Route>
