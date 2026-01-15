@@ -166,6 +166,39 @@ export type Database = {
           },
         ]
       }
+      notices: {
+        Row: {
+          bg_color: string | null
+          content: string
+          created_at: string
+          display_order: number
+          id: string
+          is_active: boolean
+          text_color: string | null
+          updated_at: string
+        }
+        Insert: {
+          bg_color?: string | null
+          content: string
+          created_at?: string
+          display_order?: number
+          id?: string
+          is_active?: boolean
+          text_color?: string | null
+          updated_at?: string
+        }
+        Update: {
+          bg_color?: string | null
+          content?: string
+          created_at?: string
+          display_order?: number
+          id?: string
+          is_active?: boolean
+          text_color?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       post_likes: {
         Row: {
           created_at: string

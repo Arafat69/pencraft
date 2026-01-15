@@ -14,6 +14,7 @@ import {
   LogOut,
   Menu,
   X,
+  Megaphone,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
@@ -28,6 +29,7 @@ const sidebarLinks = [
   { name: "Tags", href: "/admin/tags", icon: Tags },
   { name: "Featured", href: "/admin/featured", icon: Star },
   { name: "Trending", href: "/admin/trending", icon: TrendingUp },
+  { name: "Notices", href: "/admin/notices", icon: Megaphone },
   { name: "About Us", href: "/admin/about", icon: Info },
   { name: "Settings", href: "/admin/settings", icon: Settings },
 ];
