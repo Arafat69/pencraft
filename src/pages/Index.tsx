@@ -1,6 +1,7 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { ArrowRight, TrendingUp, Sparkles, Loader2, Eye } from "lucide-react";
+import { ArrowRight, TrendingUp, Sparkles, Loader2, Eye, Heart } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import PostCard from "@/components/blog/PostCard";
 import CategoryCard from "@/components/blog/CategoryCard";
@@ -9,7 +10,9 @@ import Newsletter from "@/components/blog/Newsletter";
 import { usePosts, useFeaturedPosts, useTrendingPosts } from "@/hooks/usePosts";
 import { useCategories } from "@/hooks/useCategories";
 import { useAuthors } from "@/hooks/useAuthors";
-import { mapDbPost, mapDbCategory, mapDbAuthor } from "@/lib/data";
+import { mapDbPost, mapDbCategory, mapDbAuthor, formatNumber } from "@/lib/data";
+import { useRealtimeStats } from "@/hooks/useRealtimeStats";
+import { Button } from "@/components/ui/button";
 
 export default function Index() {
   const { data: dbPosts, isLoading: postsLoading } = usePosts();
@@ -24,13 +27,21 @@ export default function Index() {
   const categories = (dbCategories || []).map(mapDbCategory);
   const authors = (dbAuthors || []).map(mapDbAuthor);
 
+  // Real-time stats
+  const { getStats } = useRealtimeStats(
+    posts.map((p) => ({ slug: p.slug, views: p.views, likes: p.likes }))
+  );
+
   const latestPosts = posts.slice(0, 6);
-  
+
   // Most Read posts - sorted by views (descending)
   const mostReadPosts = [...posts]
     .sort((a, b) => (b.views || 0) - (a.views || 0))
     .slice(0, 4);
-  
+
+  // Mobile categories state - show only 4 on mobile
+  const [showAllCategories, setShowAllCategories] = useState(false);
+
   const isLoading = postsLoading || featuredLoading || trendingLoading || categoriesLoading || authorsLoading;
 
   return (
@@ -80,7 +91,7 @@ export default function Index() {
         </div>
       )}
 
-      {/* Featured Posts */}
+      {/* 1. Featured Posts */}
       {!isLoading && featuredPosts.length > 0 && (
         <section className="py-12 lg:py-16">
           <div className="container-blog">
@@ -114,79 +125,7 @@ export default function Index() {
         </section>
       )}
 
-      {/* Most Read Section */}
-      {!isLoading && mostReadPosts.length > 0 && (
-        <section className="py-12 lg:py-16">
-          <div className="container-blog">
-            <div className="flex items-center justify-between mb-8">
-              <div className="flex items-center gap-3">
-                <Eye className="w-5 h-5 text-accent" />
-                <h2 className="font-display text-2xl lg:text-3xl font-semibold text-foreground">
-                  সবচেয়ে বেশি পঠিত
-                </h2>
-              </div>
-              <Link
-                to="/blog"
-                className="flex items-center gap-1 text-sm font-medium text-accent hover:underline"
-              >
-                View All
-                <ArrowRight className="w-4 h-4" />
-              </Link>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              {mostReadPosts.map((post, index) => (
-                <motion.div
-                  key={post.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.1 }}
-                  className="group"
-                >
-                  <Link to={`/blog/${post.slug}`} className="block">
-                    <div className="relative aspect-[4/3] rounded-xl overflow-hidden mb-3">
-                      <img
-                        src={post.featuredImage}
-                        alt={post.title}
-                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                      
-                      {/* View Count Badge */}
-                      <div className="absolute top-3 left-3 flex items-center gap-1 px-2 py-1 bg-background/80 backdrop-blur-sm text-foreground text-xs font-medium rounded-full">
-                        <Eye className="w-3 h-3" />
-                        <span>{post.views?.toLocaleString() || 0}</span>
-                      </div>
-                      
-                      {/* Rank Badge */}
-                      <div className="absolute top-3 right-3 w-8 h-8 flex items-center justify-center bg-accent text-accent-foreground text-sm font-bold rounded-full">
-                        #{index + 1}
-                      </div>
-                    </div>
-                    
-                    <div className="space-y-2">
-                      <span
-                        className="text-xs font-medium"
-                        style={{ color: post.category.color || 'var(--accent)' }}
-                      >
-                        {post.category.name}
-                      </span>
-                      <h3 className="font-bengali-display font-semibold text-foreground line-clamp-2 group-hover:text-accent transition-colors">
-                        {post.title}
-                      </h3>
-                      <p className="font-bengali text-sm text-muted-foreground line-clamp-2">
-                        {post.excerpt}
-                      </p>
-                    </div>
-                  </Link>
-                </motion.div>
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* Categories */}
+      {/* 2. Categories - Mobile: 4 + View All, Desktop: All */}
       {!isLoading && categories.length > 0 && (
         <section className="py-12 lg:py-16 bg-secondary/30">
           <div className="container-blog">
@@ -203,16 +142,38 @@ export default function Index() {
               </Link>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
+            {/* Desktop: Show all */}
+            <div className="hidden lg:grid grid-cols-3 xl:grid-cols-5 gap-4">
               {categories.map((category, index) => (
                 <CategoryCard key={category.id} category={category} index={index} />
               ))}
+            </div>
+
+            {/* Mobile: Show 4 + View All button */}
+            <div className="lg:hidden">
+              <div className="grid grid-cols-2 sm:grid-cols-2 gap-4">
+                {(showAllCategories ? categories : categories.slice(0, 4)).map((category, index) => (
+                  <CategoryCard key={category.id} category={category} index={index} />
+                ))}
+              </div>
+              {categories.length > 4 && !showAllCategories && (
+                <div className="mt-6 text-center">
+                  <Button
+                    variant="outline"
+                    onClick={() => setShowAllCategories(true)}
+                    className="gap-2"
+                  >
+                    View All Categories
+                    <ArrowRight className="w-4 h-4" />
+                  </Button>
+                </div>
+              )}
             </div>
           </div>
         </section>
       )}
 
-      {/* Latest Posts */}
+      {/* 3. Latest Posts + Sidebar (Trending + Authors) */}
       {!isLoading && (
         <section className="py-12 lg:py-16">
           <div className="container-blog">
@@ -304,6 +265,87 @@ export default function Index() {
                   </div>
                 )}
               </aside>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* 4. Most Read Section - At Bottom */}
+      {!isLoading && mostReadPosts.length > 0 && (
+        <section className="py-12 lg:py-16 bg-secondary/20">
+          <div className="container-blog">
+            <div className="flex items-center justify-between mb-8">
+              <div className="flex items-center gap-3">
+                <Eye className="w-5 h-5 text-accent" />
+                <h2 className="font-display text-2xl lg:text-3xl font-semibold text-foreground">
+                  সবচেয়ে বেশি পঠিত
+                </h2>
+              </div>
+              <Link
+                to="/blog"
+                className="flex items-center gap-1 text-sm font-medium text-accent hover:underline"
+              >
+                View All
+                <ArrowRight className="w-4 h-4" />
+              </Link>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              {mostReadPosts.map((post, index) => {
+                const realtimeStats = getStats(post.slug);
+                return (
+                  <motion.div
+                    key={post.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.1 }}
+                    className="group"
+                  >
+                    <Link to={`/blog/${post.slug}`} className="block">
+                      <div className="relative aspect-[4/3] rounded-xl overflow-hidden mb-3">
+                        <img
+                          src={post.featuredImage}
+                          alt={post.title}
+                          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+
+                        {/* Real-time Stats Badges */}
+                        <div className="absolute top-3 left-3 flex items-center gap-2">
+                          <div className="flex items-center gap-1 px-2 py-1 bg-background/80 backdrop-blur-sm text-foreground text-xs font-medium rounded-full">
+                            <Eye className="w-3 h-3" />
+                            <span>{formatNumber(realtimeStats.views || post.views || 0)}</span>
+                          </div>
+                          <div className="flex items-center gap-1 px-2 py-1 bg-background/80 backdrop-blur-sm text-foreground text-xs font-medium rounded-full">
+                            <Heart className="w-3 h-3 text-red-500" />
+                            <span>{formatNumber(realtimeStats.likes || post.likes || 0)}</span>
+                          </div>
+                        </div>
+
+                        {/* Rank Badge */}
+                        <div className="absolute top-3 right-3 w-8 h-8 flex items-center justify-center bg-accent text-accent-foreground text-sm font-bold rounded-full">
+                          #{index + 1}
+                        </div>
+                      </div>
+
+                      <div className="space-y-2">
+                        <span
+                          className="text-xs font-medium"
+                          style={{ color: post.category.color || 'var(--accent)' }}
+                        >
+                          {post.category.name}
+                        </span>
+                        <h3 className="font-bengali-display font-semibold text-foreground line-clamp-2 group-hover:text-accent transition-colors">
+                          {post.title}
+                        </h3>
+                        <p className="font-bengali text-sm text-muted-foreground line-clamp-2">
+                          {post.excerpt}
+                        </p>
+                      </div>
+                    </Link>
+                  </motion.div>
+                );
+              })}
             </div>
           </div>
         </section>
