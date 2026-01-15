@@ -35,14 +35,22 @@ export default function PostCard({
               loading="lazy"
             />
           </div>
-          <div className="absolute inset-0 bg-gradient-to-t from-foreground/90 via-foreground/30 to-transparent" />
-          <div className="absolute bottom-0 left-0 right-0 p-6 text-primary-foreground">
-            <h3 className={`text-2xl lg:text-3xl font-semibold mb-2 line-clamp-2 ${isBengali ? 'font-bengali-display' : 'font-display'}`}>
-              {post.title}
-            </h3>
-            <p className={`text-primary-foreground/80 text-sm line-clamp-2 ${isBengali ? 'font-bengali' : ''}`}>
-              {post.excerpt}
-            </p>
+          {/* Extended gradient for better text readability */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/50 to-transparent" />
+          {/* Text container with backdrop blur */}
+          <div className="absolute bottom-0 left-0 right-0 p-6 lg:p-8">
+            <div className="relative">
+              {/* Blur background behind text */}
+              <div className="absolute inset-0 -m-4 bg-black/30 backdrop-blur-md rounded-xl" />
+              <div className="relative text-white">
+                <h3 className={`text-2xl lg:text-3xl font-semibold mb-2 line-clamp-2 drop-shadow-lg ${isBengali ? 'font-bengali-display' : 'font-display'}`}>
+                  {post.title}
+                </h3>
+                <p className={`text-white/90 text-sm line-clamp-2 drop-shadow-md ${isBengali ? 'font-bengali' : ''}`}>
+                  {post.excerpt}
+                </p>
+              </div>
+            </div>
           </div>
         </Link>
       </motion.article>
