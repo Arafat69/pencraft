@@ -12,11 +12,13 @@ const footerLinks = {
   explore: [
     { name: "Home", href: "/" },
     { name: "Blog", href: "/blog" },
+    { name: "Shop", href: "/shop" },
     { name: "Categories", href: "/categories" },
     { name: "Authors", href: "/authors" },
   ],
-  categories: [
-    { name: "Categories", href: "/categories" },
+  shop: [
+    { name: "All Products", href: "/shop" },
+    { name: "My Cart", href: "/cart" },
   ],
   company: [
     { name: "About", href: "/about" },
@@ -99,9 +101,9 @@ export default function Footer() {
           </div>
 
           <div>
-            <h4 className="font-semibold text-foreground mb-4">Categories</h4>
+            <h4 className="font-semibold text-foreground mb-4">Shop</h4>
             <ul className="space-y-3">
-              {footerLinks.categories.map((link) => (
+              {footerLinks.shop.map((link) => (
                 <li key={link.name}>
                   <Link
                     to={link.href}

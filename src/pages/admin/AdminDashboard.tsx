@@ -15,6 +15,7 @@ import {
   Menu,
   X,
   Megaphone,
+  Package,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
@@ -25,6 +26,7 @@ const sidebarLinks = [
   { name: "Dashboard", href: "/admin", icon: LayoutDashboard },
   { name: "Authors", href: "/admin/authors", icon: Users },
   { name: "Posts", href: "/admin/posts", icon: FileText },
+  { name: "Products", href: "/admin/products", icon: Package },
   { name: "Categories", href: "/admin/categories", icon: FolderOpen },
   { name: "Tags", href: "/admin/tags", icon: Tags },
   { name: "Featured", href: "/admin/featured", icon: Star },

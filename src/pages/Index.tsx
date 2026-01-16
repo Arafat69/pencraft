@@ -8,6 +8,7 @@ import CategoryCard from "@/components/blog/CategoryCard";
 import AuthorCard from "@/components/blog/AuthorCard";
 import Newsletter from "@/components/blog/Newsletter";
 import HeroIllustration from "@/components/HeroIllustration";
+import ProductsSection from "@/components/shop/ProductsSection";
 import { usePosts, useFeaturedPosts, useTrendingPosts } from "@/hooks/usePosts";
 import { useCategories } from "@/hooks/useCategories";
 import { useAuthors } from "@/hooks/useAuthors";
@@ -84,16 +85,26 @@ export default function Index() {
               </div>
             </motion.div>
 
-            {/* Right Illustration - Hidden on mobile, visible on larger screens */}
+            {/* Right Illustration - Desktop */}
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.2, duration: 0.5 }}
               className="hidden lg:block flex-1"
             >
-              <HeroIllustration />
+              <HeroIllustration variant="desktop" />
             </motion.div>
           </div>
+
+          {/* Mobile Illustration - Below hero text */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.3 }}
+            className="lg:hidden mt-8"
+          >
+            <HeroIllustration variant="mobile" />
+          </motion.div>
         </div>
       </section>
 
@@ -363,6 +374,9 @@ export default function Index() {
           </div>
         </section>
       )}
+
+      {/* Products Section */}
+      {!isLoading && <ProductsSection />}
 
       {/* Newsletter */}
       <section className="py-12 lg:py-16">
