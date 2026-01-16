@@ -1,14 +1,16 @@
 import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, Search, Sun, Moon, User, LogOut } from "lucide-react";
+import { Menu, X, Search, Sun, Moon, User, LogOut, ShoppingCart, ShoppingBag } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useAuth } from "@/contexts/AuthContext";
+import { useCart } from "@/hooks/useCart";
 
 const navigation = [
   { name: "Home", href: "/" },
   { name: "Blog", href: "/blog" },
+  { name: "Shop", href: "/shop" },
   { name: "Categories", href: "/categories" },
   { name: "About", href: "/about" },
   { name: "Contact", href: "/contact" },
@@ -22,6 +24,8 @@ export default function Header() {
   const navigate = useNavigate();
   const { theme, toggleTheme } = useTheme();
   const { user, signOut } = useAuth();
+  const { data: cartItems } = useCart();
+  const cartCount = (cartItems || []).reduce((sum, item) => sum + item.quantity, 0);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -127,6 +131,20 @@ export default function Header() {
                 <Sun className="h-5 w-5" />
               )}
             </Button>
+
+            {/* Cart Button */}
+            {user && (
+              <Link to="/cart" className="relative">
+                <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-foreground">
+                  <ShoppingCart className="h-5 w-5" />
+                  {cartCount > 0 && (
+                    <span className="absolute -top-1 -right-1 w-5 h-5 bg-accent text-accent-foreground text-xs font-bold rounded-full flex items-center justify-center">
+                      {cartCount > 9 ? "9+" : cartCount}
+                    </span>
+                  )}
+                </Button>
+              </Link>
+            )}
 
             {/* Auth Buttons */}
             {user ? (

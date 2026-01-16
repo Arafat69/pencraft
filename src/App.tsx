@@ -34,6 +34,9 @@ import AboutManager from "./pages/admin/AboutManager";
 import SettingsManager from "./pages/admin/SettingsManager";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import Terms from "./pages/Terms";
+import Shop from "./pages/Shop";
+import Cart from "./pages/Cart";
+import ProductsManager from "./pages/admin/ProductsManager";
 
 const queryClient = new QueryClient();
 
@@ -59,6 +62,8 @@ const App = () => (
               <Route path="/contact" element={<Contact />} />
               <Route path="/privacy" element={<PrivacyPolicy />} />
               <Route path="/terms" element={<Terms />} />
+              <Route path="/shop" element={<Shop />} />
+              <Route path="/cart" element={<Cart />} />
               <Route path="/auth" element={<Auth />} />
               <Route path="/login" element={<Auth />} />
               <Route path="/profile" element={<Profile />} />
@@ -76,6 +81,7 @@ const App = () => (
                 <Route path="featured" element={<FeaturedManager />} />
                 <Route path="trending" element={<TrendingManager />} />
                 <Route path="notices" element={<NoticesManager />} />
+                <Route path="products" element={<ProductsManager />} />
                 <Route path="about" element={<AboutManager />} />
                 <Route path="settings" element={<SettingsManager />} />
               </Route>

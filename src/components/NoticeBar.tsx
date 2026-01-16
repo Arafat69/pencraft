@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { X, Megaphone } from "lucide-react";
+import { motion } from "framer-motion";
+import { Megaphone } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
 interface Notice {
@@ -12,8 +12,6 @@ interface Notice {
 
 export default function NoticeBar() {
   const [notices, setNotices] = useState<Notice[]>([]);
-  const [isVisible, setIsVisible] = useState(true);
-  const [currentIndex, setCurrentIndex] = useState(0);
 
   useEffect(() => {
     const fetchNotices = async () => {
@@ -31,77 +29,42 @@ export default function NoticeBar() {
     fetchNotices();
   }, []);
 
-  // Rotate through notices every 5 seconds if there are multiple
-  useEffect(() => {
-    if (notices.length <= 1) return;
-    
-    const interval = setInterval(() => {
-      setCurrentIndex((prev) => (prev + 1) % notices.length);
-    }, 5000);
+  if (notices.length === 0) return null;
 
-    return () => clearInterval(interval);
-  }, [notices.length]);
-
-  if (!isVisible || notices.length === 0) return null;
-
-  const currentNotice = notices[currentIndex];
-  const bgColor = currentNotice.bg_color || "#f97316";
-  const textColor = currentNotice.text_color || "#ffffff";
+  const combinedContent = notices.map(n => n.content).join("   •   ");
+  const bgColor = notices[0].bg_color || "#f97316";
+  const textColor = notices[0].text_color || "#ffffff";
 
   return (
-    <AnimatePresence>
-      <motion.div
-        initial={{ height: 0, opacity: 0 }}
-        animate={{ height: "auto", opacity: 1 }}
-        exit={{ height: 0, opacity: 0 }}
-        className="relative overflow-hidden"
-        style={{ backgroundColor: bgColor }}
-      >
-        <div className="container-blog py-2 flex items-center justify-center gap-3">
-          <Megaphone className="w-4 h-4 flex-shrink-0" style={{ color: textColor }} />
-          
-          <div className="overflow-hidden flex-1">
-            <motion.div
-              key={currentNotice.id}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              transition={{ duration: 0.3 }}
-              className="text-sm font-medium text-center font-bengali"
-              style={{ color: textColor }}
-            >
-              <div className="inline-block animate-marquee whitespace-nowrap">
-                {currentNotice.content}
-                {notices.length > 1 && (
-                  <span className="mx-4 opacity-50">•</span>
-                )}
-              </div>
-            </motion.div>
-          </div>
-
-          <button
-            onClick={() => setIsVisible(false)}
-            className="p-1 rounded-full hover:bg-white/20 transition-colors flex-shrink-0"
-            style={{ color: textColor }}
-            aria-label="Close notice"
-          >
-            <X className="w-4 h-4" />
-          </button>
-        </div>
-
-        {/* Progress bar for multiple notices */}
-        {notices.length > 1 && (
-          <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-white/20">
-            <motion.div
-              key={currentIndex}
-              initial={{ width: "0%" }}
-              animate={{ width: "100%" }}
-              transition={{ duration: 5, ease: "linear" }}
-              className="h-full bg-white/50"
-            />
-          </div>
-        )}
-      </motion.div>
-    </AnimatePresence>
+    <div className="relative overflow-hidden h-9" style={{ backgroundColor: bgColor }}>
+      <div className="absolute left-0 top-0 bottom-0 z-10 flex items-center gap-2 px-4 bg-inherit">
+        <Megaphone className="w-4 h-4" style={{ color: textColor }} />
+        <span className="text-xs font-bold uppercase tracking-wide" style={{ color: textColor }}>
+          Breaking
+        </span>
+      </div>
+      
+      <div className="absolute inset-0 pl-28 flex items-center overflow-hidden">
+        <motion.div
+          className="flex whitespace-nowrap"
+          animate={{ x: ["0%", "-50%"] }}
+          transition={{
+            x: {
+              repeat: Infinity,
+              repeatType: "loop",
+              duration: Math.max(15, combinedContent.length * 0.12),
+              ease: "linear",
+            },
+          }}
+        >
+          <span className="text-sm font-medium font-bengali px-4" style={{ color: textColor }}>
+            {combinedContent}
+          </span>
+          <span className="text-sm font-medium font-bengali px-4" style={{ color: textColor }}>
+            {combinedContent}
+          </span>
+        </motion.div>
+      </div>
+    </div>
   );
 }
