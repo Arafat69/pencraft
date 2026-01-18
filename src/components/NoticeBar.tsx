@@ -37,14 +37,11 @@ export default function NoticeBar() {
 
   return (
     <div className="relative overflow-hidden h-9" style={{ backgroundColor: bgColor }}>
-      <div className="absolute left-0 top-0 bottom-0 z-10 flex items-center gap-2 px-4 bg-inherit">
+      <div className="absolute left-0 top-0 bottom-0 z-10 flex items-center px-3 bg-inherit">
         <Megaphone className="w-4 h-4" style={{ color: textColor }} />
-        <span className="text-xs font-bold uppercase tracking-wide" style={{ color: textColor }}>
-          Breaking
-        </span>
       </div>
       
-      <div className="absolute inset-0 pl-28 flex items-center overflow-hidden">
+      <div className="absolute inset-0 pl-10 flex items-center overflow-hidden">
         <motion.div
           className="flex whitespace-nowrap"
           animate={{ x: ["0%", "-50%"] }}
