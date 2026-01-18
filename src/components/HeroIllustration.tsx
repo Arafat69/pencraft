@@ -1,6 +1,10 @@
 import { motion } from "framer-motion";
 
-export default function HeroIllustration() {
+interface HeroIllustrationProps {
+  variant?: "desktop" | "mobile";
+}
+
+export default function HeroIllustration({ variant = "desktop" }: HeroIllustrationProps) {
   return (
     <div className="relative w-full h-full min-h-[300px] lg:min-h-[400px] flex items-center justify-center">
       {/* Background glow */}
