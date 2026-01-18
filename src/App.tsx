@@ -36,6 +36,7 @@ import PrivacyPolicy from "./pages/PrivacyPolicy";
 import Terms from "./pages/Terms";
 import Shop from "./pages/Shop";
 import Cart from "./pages/Cart";
+import Checkout from "./pages/Checkout";
 import ProductsManager from "./pages/admin/ProductsManager";
 
 const queryClient = new QueryClient();
@@ -64,6 +65,7 @@ const App = () => (
               <Route path="/terms" element={<Terms />} />
               <Route path="/shop" element={<Shop />} />
               <Route path="/cart" element={<Cart />} />
+              <Route path="/checkout" element={<Checkout />} />
               <Route path="/auth" element={<Auth />} />
               <Route path="/login" element={<Auth />} />
               <Route path="/profile" element={<Profile />} />
