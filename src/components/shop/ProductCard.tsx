@@ -27,9 +27,7 @@ export default function ProductCard({ product, index = 0, onQuickView }: Product
   };
 
   const handleCardClick = () => {
-    if (onQuickView) {
-      onQuickView(product);
-    }
+    navigate(`/shop/${product.id}`);
   };
 
   return (

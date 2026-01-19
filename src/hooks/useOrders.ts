@@ -2,6 +2,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
+import { Product } from "./useProducts";
 
 export interface Order {
   id: string;
@@ -22,6 +23,11 @@ export interface OrderItem {
   quantity: number;
   price_at_time: number;
   created_at: string;
+  product?: Product;
+}
+
+export interface OrderWithItems extends Order {
+  order_items?: OrderItem[];
 }
 
 interface CreateOrderInput {
@@ -50,6 +56,27 @@ export function useOrders() {
   });
 }
 
+export function useAllOrders() {
+  return useQuery({
+    queryKey: ["all-orders"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("orders")
+        .select(`
+          *,
+          order_items (
+            *,
+            product:products (*)
+          )
+        `)
+        .order("created_at", { ascending: false });
+
+      if (error) throw error;
+      return data as OrderWithItems[];
+    },
+  });
+}
+
 export function useOrderWithItems(orderId: string) {
   return useQuery({
     queryKey: ["order", orderId],
@@ -71,6 +98,32 @@ export function useOrderWithItems(orderId: string) {
       };
     },
     enabled: !!orderId,
+  });
+}
+
+export function useUpdateOrderStatus() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ orderId, status }: { orderId: string; status: string }) => {
+      const { data, error } = await supabase
+        .from("orders")
+        .update({ status, updated_at: new Date().toISOString() })
+        .eq("id", orderId)
+        .select()
+        .single();
+
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["all-orders"] });
+      queryClient.invalidateQueries({ queryKey: ["orders"] });
+      toast.success("অর্ডার স্ট্যাটাস আপডেট হয়েছে");
+    },
+    onError: (error: Error) => {
+      toast.error(error.message || "স্ট্যাটাস আপডেট করতে সমস্যা হয়েছে");
+    },
   });
 }
 

@@ -375,11 +375,11 @@ export default function Index() {
         </section>
       )}
 
-      {/* Products Section */}
+      {/* Products Section - Above Most Read */}
       {!isLoading && <ProductsSection />}
 
-      {/* Newsletter */}
-      <section className="py-12 lg:py-16">
+      {/* Most Read Section - At Bottom */}
+      {!isLoading && mostReadPosts.length > 0 && (
         <div className="container-blog">
           <Newsletter />
         </div>

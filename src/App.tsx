@@ -3,7 +3,6 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { ThemeProvider } from "@/contexts/ThemeContext";
 import { AuthProvider } from "@/contexts/AuthContext";
 import ScrollToTop from "@/components/ScrollToTop";
 import Index from "./pages/Index";
@@ -38,12 +37,25 @@ import Shop from "./pages/Shop";
 import Cart from "./pages/Cart";
 import Checkout from "./pages/Checkout";
 import ProductsManager from "./pages/admin/ProductsManager";
+import OrdersManager from "./pages/admin/OrdersManager";
+import ProductDetail from "./pages/ProductDetail";
+import { useEffect } from "react";
 
 const queryClient = new QueryClient();
 
+// Force dark theme
+function DarkThemeProvider({ children }: { children: React.ReactNode }) {
+  useEffect(() => {
+    document.documentElement.classList.remove("light");
+    document.documentElement.classList.add("dark");
+  }, []);
+  
+  return <>{children}</>;
+}
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <ThemeProvider>
+    <DarkThemeProvider>
       <AuthProvider>
         <TooltipProvider>
           <Toaster />
@@ -64,6 +76,7 @@ const App = () => (
               <Route path="/privacy" element={<PrivacyPolicy />} />
               <Route path="/terms" element={<Terms />} />
               <Route path="/shop" element={<Shop />} />
+              <Route path="/shop/:id" element={<ProductDetail />} />
               <Route path="/cart" element={<Cart />} />
               <Route path="/checkout" element={<Checkout />} />
               <Route path="/auth" element={<Auth />} />
@@ -84,6 +97,7 @@ const App = () => (
                 <Route path="trending" element={<TrendingManager />} />
                 <Route path="notices" element={<NoticesManager />} />
                 <Route path="products" element={<ProductsManager />} />
+                <Route path="orders" element={<OrdersManager />} />
                 <Route path="about" element={<AboutManager />} />
                 <Route path="settings" element={<SettingsManager />} />
               </Route>
@@ -92,7 +106,7 @@ const App = () => (
           </BrowserRouter>
         </TooltipProvider>
       </AuthProvider>
-    </ThemeProvider>
+    </DarkThemeProvider>
   </QueryClientProvider>
 );
 
