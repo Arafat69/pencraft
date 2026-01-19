@@ -1,9 +1,8 @@
 import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, Search, Sun, Moon, User, LogOut, ShoppingCart, ShoppingBag } from "lucide-react";
+import { Menu, X, Search, User, LogOut, ShoppingCart } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useTheme } from "@/contexts/ThemeContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { useCart } from "@/hooks/useCart";
 
@@ -21,7 +20,6 @@ export default function Header() {
   const [searchQuery, setSearchQuery] = useState("");
   const location = useLocation();
   const navigate = useNavigate();
-  const { theme, toggleTheme } = useTheme();
   const { user, signOut } = useAuth();
   const { data: cartItems } = useCart();
   const cartCount = (cartItems || []).reduce((sum, item) => sum + item.quantity, 0);
@@ -115,20 +113,6 @@ export default function Header() {
               className="sm:hidden text-muted-foreground hover:text-foreground"
             >
               <Search className="h-5 w-5" />
-            </Button>
-
-            {/* Theme Toggle */}
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={toggleTheme}
-              className="text-muted-foreground hover:text-foreground"
-            >
-              {theme === "light" ? (
-                <Moon className="h-5 w-5" />
-              ) : (
-                <Sun className="h-5 w-5" />
-              )}
             </Button>
 
             {/* Cart Button */}
