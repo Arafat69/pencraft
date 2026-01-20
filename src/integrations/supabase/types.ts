@@ -201,6 +201,39 @@ export type Database = {
           },
         ]
       }
+      contact_messages: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          is_archived: boolean | null
+          is_read: boolean | null
+          message: string
+          name: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          is_archived?: boolean | null
+          is_read?: boolean | null
+          message: string
+          name: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          is_archived?: boolean | null
+          is_read?: boolean | null
+          message?: string
+          name?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       notices: {
         Row: {
           bg_color: string | null

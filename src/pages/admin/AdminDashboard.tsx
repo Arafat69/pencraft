@@ -16,10 +16,14 @@ import {
   X,
   Megaphone,
   Package,
+  ShoppingCart,
+  Mail,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/contexts/AuthContext";
 import { useAdmin } from "@/hooks/useAdmin";
+import { useUnreadCount } from "@/hooks/useContactMessages";
 import { supabase } from "@/integrations/supabase/client";
 
 const sidebarLinks = [
@@ -27,6 +31,8 @@ const sidebarLinks = [
   { name: "Authors", href: "/admin/authors", icon: Users },
   { name: "Posts", href: "/admin/posts", icon: FileText },
   { name: "Products", href: "/admin/products", icon: Package },
+  { name: "Orders", href: "/admin/orders", icon: ShoppingCart },
+  { name: "Messages", href: "/admin/messages", icon: Mail, hasBadge: true },
   { name: "Categories", href: "/admin/categories", icon: FolderOpen },
   { name: "Tags", href: "/admin/tags", icon: Tags },
   { name: "Featured", href: "/admin/featured", icon: Star },
@@ -41,12 +47,15 @@ export default function AdminDashboard() {
   const location = useLocation();
   const { user, signOut } = useAuth();
   const { isAdmin, loading } = useAdmin();
+  const { data: unreadCount } = useUnreadCount();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [stats, setStats] = useState({
     posts: 0,
     authors: 0,
     categories: 0,
     tags: 0,
+    orders: 0,
+    messages: 0,
   });
 
   useEffect(() => {
@@ -57,11 +66,13 @@ export default function AdminDashboard() {
 
   useEffect(() => {
     const fetchStats = async () => {
-      const [postsRes, authorsRes, categoriesRes, tagsRes] = await Promise.all([
+      const [postsRes, authorsRes, categoriesRes, tagsRes, ordersRes, messagesRes] = await Promise.all([
         supabase.from("posts").select("id", { count: "exact", head: true }),
         supabase.from("authors").select("id", { count: "exact", head: true }),
         supabase.from("categories").select("id", { count: "exact", head: true }),
         supabase.from("tags").select("id", { count: "exact", head: true }),
+        supabase.from("orders").select("id", { count: "exact", head: true }),
+        supabase.from("contact_messages").select("id", { count: "exact", head: true }),
       ]);
 
       setStats({
@@ -69,6 +80,8 @@ export default function AdminDashboard() {
         authors: authorsRes.count || 0,
         categories: categoriesRes.count || 0,
         tags: tagsRes.count || 0,
+        orders: ordersRes.count || 0,
+        messages: messagesRes.count || 0,
       });
     };
 
@@ -141,7 +154,12 @@ export default function AdminDashboard() {
                 }`}
               >
                 <link.icon className="h-5 w-5" />
-                <span>{link.name}</span>
+                <span className="flex-1">{link.name}</span>
+                {link.hasBadge && unreadCount && unreadCount > 0 && (
+                  <Badge variant="destructive" className="h-5 min-w-5 text-xs">
+                    {unreadCount}
+                  </Badge>
+                )}
               </Link>
             ))}
             <button
@@ -179,7 +197,12 @@ export default function AdminDashboard() {
                 }`}
               >
                 <link.icon className="h-5 w-5" />
-                <span>{link.name}</span>
+                <span className="flex-1">{link.name}</span>
+                {link.hasBadge && unreadCount && unreadCount > 0 && (
+                  <Badge variant="destructive" className="h-5 min-w-5 text-xs">
+                    {unreadCount}
+                  </Badge>
+                )}
               </Link>
             ))}
           </nav>
