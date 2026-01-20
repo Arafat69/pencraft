@@ -38,6 +38,7 @@ import Cart from "./pages/Cart";
 import Checkout from "./pages/Checkout";
 import ProductsManager from "./pages/admin/ProductsManager";
 import OrdersManager from "./pages/admin/OrdersManager";
+import MessagesManager from "./pages/admin/MessagesManager";
 import ProductDetail from "./pages/ProductDetail";
 import { useEffect } from "react";
 
@@ -98,6 +99,7 @@ const App = () => (
                 <Route path="notices" element={<NoticesManager />} />
                 <Route path="products" element={<ProductsManager />} />
                 <Route path="orders" element={<OrdersManager />} />
+                <Route path="messages" element={<MessagesManager />} />
                 <Route path="about" element={<AboutManager />} />
                 <Route path="settings" element={<SettingsManager />} />
               </Route>
