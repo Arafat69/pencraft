@@ -378,8 +378,8 @@ export default function Index() {
       {/* Products Section - Above Most Read */}
       {!isLoading && <ProductsSection />}
 
-      {/* Most Read Section - At Bottom */}
-      {!isLoading && mostReadPosts.length > 0 && (
+      {/* Newsletter Section - At Bottom */}
+      <section className="py-16 bg-gradient-to-b from-background to-muted/30">
         <div className="container-blog">
           <Newsletter />
         </div>
