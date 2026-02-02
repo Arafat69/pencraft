@@ -18,6 +18,7 @@ import {
   Package,
   ShoppingCart,
   Mail,
+  Bell,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -38,6 +39,7 @@ const sidebarLinks = [
   { name: "Featured", href: "/admin/featured", icon: Star },
   { name: "Trending", href: "/admin/trending", icon: TrendingUp },
   { name: "Notices", href: "/admin/notices", icon: Megaphone },
+  { name: "Popup", href: "/admin/popup", icon: Bell },
   { name: "About Us", href: "/admin/about", icon: Info },
   { name: "Settings", href: "/admin/settings", icon: Settings },
 ];

@@ -345,6 +345,45 @@ export type Database = {
         }
         Relationships: []
       }
+      popup_notices: {
+        Row: {
+          button_text: string | null
+          content: string | null
+          created_at: string
+          display_type: string
+          id: string
+          image_url: string | null
+          is_active: boolean
+          link_url: string | null
+          title: string | null
+          updated_at: string
+        }
+        Insert: {
+          button_text?: string | null
+          content?: string | null
+          created_at?: string
+          display_type?: string
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          link_url?: string | null
+          title?: string | null
+          updated_at?: string
+        }
+        Update: {
+          button_text?: string | null
+          content?: string | null
+          created_at?: string
+          display_type?: string
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          link_url?: string | null
+          title?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       post_likes: {
         Row: {
           created_at: string
