@@ -14,8 +14,8 @@ export default {
     },
     extend: {
       fontFamily: {
-        sans: ["DM Sans", "system-ui", "sans-serif"],
-        display: ["Playfair Display", "Georgia", "serif"],
+        sans: ["Plus Jakarta Sans", "system-ui", "sans-serif"],
+        display: ["Sora", "system-ui", "sans-serif"],
         bengali: ["Tiro Bangla", "Galada", "Hind Siliguri", "Noto Sans Bengali", "sans-serif"],
         "bengali-display": ["Galada", "Tiro Bangla", "Hind Siliguri", "sans-serif"],
       },
