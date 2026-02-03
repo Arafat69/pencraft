@@ -13,9 +13,9 @@ export default function PopupNotice() {
   useEffect(() => {
     if (notice) {
       const dismissedId = localStorage.getItem(DISMISSED_KEY);
+      // Only show if this notice hasn't been dismissed before
       if (dismissedId !== notice.id) {
-        // Small delay for better UX
-        const timer = setTimeout(() => setIsVisible(true), 500);
+        const timer = setTimeout(() => setIsVisible(true), 800);
         return () => clearTimeout(timer);
       }
     }
@@ -42,35 +42,35 @@ export default function PopupNotice() {
   return (
     <AnimatePresence>
       {isVisible && (
-        <>
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
           {/* Backdrop */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100]"
+            className="absolute inset-0 bg-black/70 backdrop-blur-sm"
             onClick={handleDismiss}
           />
 
-          {/* Popup */}
+          {/* Popup Container */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.9, y: 20 }}
+            initial={{ opacity: 0, scale: 0.85, y: 30 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.9, y: 20 }}
-            transition={{ type: "spring", damping: 25, stiffness: 300 }}
-            className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-[101] w-[90vw] max-w-lg"
+            exit={{ opacity: 0, scale: 0.85, y: 30 }}
+            transition={{ type: "spring", damping: 25, stiffness: 350 }}
+            className="relative w-full max-w-sm sm:max-w-md md:max-w-lg z-10"
           >
-            <div className="relative bg-card rounded-2xl shadow-elevated overflow-hidden">
-              {/* Close Button */}
+            <div className="relative bg-card rounded-2xl shadow-2xl overflow-hidden border border-border">
+              {/* Close Button - Always visible */}
               <button
                 onClick={handleDismiss}
-                className="absolute top-3 right-3 z-10 w-8 h-8 rounded-full bg-black/50 hover:bg-black/70 text-white flex items-center justify-center transition-colors"
+                className="absolute top-2 right-2 z-20 w-8 h-8 rounded-full bg-black/60 hover:bg-black/80 text-white flex items-center justify-center transition-colors"
                 aria-label="Close popup"
               >
-                <X className="w-5 h-5" />
+                <X className="w-4 h-4" />
               </button>
 
-              {/* Image */}
+              {/* Image Section */}
               {showImage && notice.image_url && (
                 <div
                   className={`relative ${notice.link_url ? "cursor-pointer" : ""}`}
@@ -79,24 +79,24 @@ export default function PopupNotice() {
                   <img
                     src={notice.image_url}
                     alt={notice.title || "Notice"}
-                    className="w-full h-auto max-h-[50vh] object-cover"
+                    className="w-full h-auto max-h-[40vh] sm:max-h-[50vh] object-contain bg-muted"
                   />
                   {notice.link_url && !showText && (
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent pointer-events-none" />
                   )}
                 </div>
               )}
 
-              {/* Text Content */}
+              {/* Text Content Section */}
               {showText && (notice.title || notice.content) && (
-                <div className="p-6">
+                <div className="p-4 sm:p-6">
                   {notice.title && (
-                    <h2 className="font-display text-xl font-bold text-foreground mb-2">
+                    <h2 className="font-display text-lg sm:text-xl font-bold text-foreground mb-2 pr-6">
                       {notice.title}
                     </h2>
                   )}
                   {notice.content && (
-                    <p className="text-muted-foreground leading-relaxed mb-4">
+                    <p className="text-sm sm:text-base text-muted-foreground leading-relaxed mb-4">
                       {notice.content}
                     </p>
                   )}
@@ -104,6 +104,7 @@ export default function PopupNotice() {
                     <Button
                       onClick={handleImageClick}
                       className="w-full"
+                      size="lg"
                     >
                       {notice.button_text || "Learn More"}
                     </Button>
@@ -112,7 +113,7 @@ export default function PopupNotice() {
               )}
             </div>
           </motion.div>
-        </>
+        </div>
       )}
     </AnimatePresence>
   );
