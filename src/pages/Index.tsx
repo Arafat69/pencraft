@@ -47,40 +47,77 @@ export default function Index() {
 
   return (
     <Layout>
-      {/* Hero Section */}
+      {/* Hero Section - Personal Style */}
       <section className="relative overflow-hidden py-16 lg:py-24">
-        <div className="absolute inset-0 bg-gradient-to-b from-secondary/50 to-background" />
+        <div className="absolute inset-0 bg-gradient-to-b from-accent/5 via-secondary/30 to-background" />
+        
+        {/* Decorative elements */}
+        <div className="absolute top-20 left-10 w-72 h-72 bg-accent/10 rounded-full blur-3xl" />
+        <div className="absolute bottom-10 right-10 w-96 h-96 bg-primary/10 rounded-full blur-3xl" />
+        
         <div className="container-blog relative">
-          <div className="flex flex-col lg:flex-row items-center gap-8 lg:gap-12">
+          <div className="flex flex-col lg:flex-row items-center gap-10 lg:gap-16">
             {/* Left Content */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="flex-1 max-w-2xl"
+              className="flex-1 max-w-2xl text-center lg:text-left"
             >
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent/10 text-accent text-sm font-medium mb-6">
-                <Sparkles className="w-4 h-4" />
-                Welcome to my Blog
-              </div>
-              <h1 className="font-display text-4xl sm:text-5xl lg:text-6xl font-bold text-foreground leading-tight mb-6">
-                Stories that inspire, ideas that matter
+              {/* Personal greeting */}
+              <motion.div 
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.1 }}
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent/10 border border-accent/20 text-accent text-sm font-medium mb-6"
+              >
+                <span className="animate-pulse">👋</span>
+                আসসালামু আলাইকুম
+              </motion.div>
+
+              {/* Name with stylish typography */}
+              <h1 className="font-display text-4xl sm:text-5xl lg:text-6xl font-bold text-foreground leading-tight mb-4">
+                আমি{" "}
+                <span className="relative inline-block">
+                  <span className="relative z-10 bg-gradient-to-r from-accent via-primary to-accent bg-clip-text text-transparent">
+                    আরাফাত রহমান দিহান
+                  </span>
+                  <motion.span
+                    initial={{ scaleX: 0 }}
+                    animate={{ scaleX: 1 }}
+                    transition={{ delay: 0.5, duration: 0.6 }}
+                    className="absolute bottom-2 left-0 w-full h-3 bg-accent/20 -z-0 origin-left"
+                  />
+                </span>
               </h1>
-              <p className="text-lg lg:text-xl text-muted-foreground leading-relaxed mb-8">
-                Discover thoughtfully crafted articles on design, technology, lifestyle, and more. Join our community of curious minds.
+
+              <p className="font-bengali text-lg lg:text-xl text-muted-foreground leading-relaxed mb-6">
+                একজন লেখক, স্বপ্নদ্রষ্টা এবং সৃজনশীল মানুষ। এখানে আমি আমার চিন্তা, অভিজ্ঞতা এবং গল্প শেয়ার করি।
               </p>
-              <div className="flex flex-wrap gap-4">
+
+              {/* Stats or quick info */}
+              <div className="flex flex-wrap justify-center lg:justify-start gap-6 mb-8">
+                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                  <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+                  <span>Available for collaboration</span>
+                </div>
+                <div className="text-sm text-muted-foreground">
+                  <span className="font-semibold text-foreground">{posts.length}+</span> Articles
+                </div>
+              </div>
+
+              <div className="flex flex-wrap justify-center lg:justify-start gap-4">
                 <Link
                   to="/blog"
-                  className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-primary-foreground rounded-lg font-medium hover:opacity-90 transition-opacity"
+                  className="inline-flex items-center gap-2 px-6 py-3 bg-accent text-accent-foreground rounded-xl font-medium hover:bg-accent/90 transition-all shadow-lg shadow-accent/25 hover:shadow-accent/40 hover:-translate-y-0.5"
                 >
-                  Explore Articles
+                  আমার লেখাগুলো
                   <ArrowRight className="w-4 h-4" />
                 </Link>
                 <Link
                   to="/about"
-                  className="inline-flex items-center gap-2 px-6 py-3 bg-secondary text-secondary-foreground rounded-lg font-medium hover:bg-muted transition-colors"
+                  className="inline-flex items-center gap-2 px-6 py-3 bg-secondary text-secondary-foreground rounded-xl font-medium hover:bg-muted transition-colors border border-border"
                 >
-                  About Us
+                  আমার সম্পর্কে
                 </Link>
               </div>
             </motion.div>

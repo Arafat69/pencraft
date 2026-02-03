@@ -43,15 +43,23 @@ export default function Header() {
       <nav className="container-blog">
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-2">
-            <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
-              <span className="text-primary-foreground font-display font-bold text-xl">
-                A
+          <Link to="/" className="flex items-center gap-3 group">
+            <div className="relative">
+              <div className="w-11 h-11 bg-gradient-to-br from-accent via-primary to-accent/70 rounded-xl flex items-center justify-center shadow-lg shadow-accent/20 group-hover:shadow-accent/40 transition-shadow duration-300">
+                <span className="text-primary-foreground font-display font-bold text-xl tracking-tight">
+                  আ
+                </span>
+              </div>
+              <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 rounded-full border-2 border-background" />
+            </div>
+            <div className="hidden sm:flex flex-col -space-y-1">
+              <span className="font-display text-lg font-bold text-foreground tracking-tight">
+                Arafat Rahman
+              </span>
+              <span className="text-xs text-accent font-medium">
+                Personal Blog
               </span>
             </div>
-            <span className="font-display text-xl font-semibold text-foreground hidden sm:block">
-              Arafat Rahman Dihan
-            </span>
           </Link>
 
           {/* Desktop Navigation */}
