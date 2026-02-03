@@ -38,11 +38,11 @@ export default function Footer() {
             <Link to="/" className="flex items-center gap-2 mb-4">
               <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
                 <span className="text-primary-foreground font-display font-bold text-xl">
-                  P
+                  A
                 </span>
               </div>
               <span className="font-display text-xl font-semibold text-foreground">
-                Pencraft
+                Arafat Rahman Dihan
               </span>
             </Link>
             <p className="text-muted-foreground text-sm leading-relaxed mb-6 max-w-sm">
@@ -136,7 +136,7 @@ export default function Footer() {
         {/* Bottom */}
         <div className="mt-12 pt-8 border-t border-border flex flex-col sm:flex-row justify-between items-center gap-4">
           <p className="text-sm text-muted-foreground">
-            © {new Date().getFullYear()} Pencraft. All rights reserved.
+            © {new Date().getFullYear()} Arafat Rahman Dihan. All rights reserved.
           </p>
           <div className="flex items-center gap-4 text-sm text-muted-foreground">
             <Link to="/privacy" className="hover:text-foreground transition-colors">

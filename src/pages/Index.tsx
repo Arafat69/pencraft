@@ -60,7 +60,7 @@ export default function Index() {
             >
               <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent/10 text-accent text-sm font-medium mb-6">
                 <Sparkles className="w-4 h-4" />
-                Welcome to Pencraft
+                Welcome to my Blog
               </div>
               <h1 className="font-display text-4xl sm:text-5xl lg:text-6xl font-bold text-foreground leading-tight mb-6">
                 Stories that inspire, ideas that matter

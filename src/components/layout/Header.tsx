@@ -46,11 +46,11 @@ export default function Header() {
           <Link to="/" className="flex items-center gap-2">
             <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
               <span className="text-primary-foreground font-display font-bold text-xl">
-                P
+                A
               </span>
             </div>
             <span className="font-display text-xl font-semibold text-foreground hidden sm:block">
-              Pencraft
+              Arafat Rahman Dihan
             </span>
           </Link>
 
