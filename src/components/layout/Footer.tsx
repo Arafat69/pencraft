@@ -35,15 +35,22 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 lg:gap-12">
           {/* Brand */}
           <div className="lg:col-span-2">
-            <Link to="/" className="flex items-center gap-2 mb-4">
-              <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
-                <span className="text-primary-foreground font-display font-bold text-xl">
-                  A
+            <Link to="/" className="flex items-center gap-3 mb-4 group">
+              <div className="relative">
+                <div className="w-12 h-12 bg-gradient-to-br from-accent via-primary to-accent/70 rounded-xl flex items-center justify-center shadow-lg shadow-accent/20">
+                  <span className="text-primary-foreground font-display font-bold text-2xl">
+                    আ
+                  </span>
+                </div>
+              </div>
+              <div className="flex flex-col -space-y-1">
+                <span className="font-display text-xl font-bold text-foreground">
+                  Arafat Rahman Dihan
+                </span>
+                <span className="text-xs text-accent font-medium">
+                  Writer • Creator • Dreamer
                 </span>
               </div>
-              <span className="font-display text-xl font-semibold text-foreground">
-                Arafat Rahman Dihan
-              </span>
             </Link>
             <p className="text-muted-foreground text-sm leading-relaxed mb-6 max-w-sm">
               A platform for curious minds. We curate stories on design, technology, and lifestyle that inspire and inform.
