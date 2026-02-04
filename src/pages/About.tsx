@@ -21,9 +21,9 @@ From technology and design to business strategy and personal growth, our diverse
       <section className="py-16 lg:py-24">
         <div className="container-blog">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="max-w-3xl mx-auto text-center">
-            <h1 className="font-display text-4xl lg:text-5xl font-bold text-foreground mb-6">About Pencraft</h1>
+            <h1 className="font-display text-4xl lg:text-5xl font-bold text-foreground mb-6">About Me</h1>
             <p className="text-lg text-muted-foreground leading-relaxed mb-8">
-              Pencraft is a modern publishing platform for curious minds. We believe in the power of well-crafted stories to inspire, educate, and connect people across the globe.
+              Hi, I'm Arafat Rahman Dihan — a writer, developer, and creator. This is my personal space where I share my thoughts, projects, and creative work with the world.
             </p>
             {isLoading ? (
               <Loader2 className="w-6 h-6 animate-spin mx-auto text-accent" />
