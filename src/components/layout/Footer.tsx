@@ -1,11 +1,11 @@
 import { Link } from "react-router-dom";
-import { Twitter, Linkedin, Github, Instagram, Mail } from "lucide-react";
+import { Twitter, Linkedin, Facebook, Instagram, Mail } from "lucide-react";
 
 const socialLinks = [
-  { name: "Twitter", icon: Twitter, href: "#" },
+  { name: "Twitter", icon: Twitter, href: "https://x.com/arafat_dihan" },
   { name: "LinkedIn", icon: Linkedin, href: "#" },
-  { name: "GitHub", icon: Github, href: "#" },
-  { name: "Instagram", icon: Instagram, href: "#" },
+  { name: "Facebook", icon: Facebook, href: "https://www.facebook.com/arafatrahmandihan0" },
+  { name: "Instagram", icon: Instagram, href: "https://instagram.com/arafat_rahman_dihan" },
 ];
 
 const footerLinks = {
@@ -154,7 +154,7 @@ export default function Footer() {
               Terms
             </Link>
             <a
-              href="mailto:hello@pencraft.blog"
+              href="mailto:dihanarafatrahman@gmail.com"
               className="flex items-center gap-1 hover:text-foreground transition-colors"
             >
               <Mail className="h-4 w-4" />
