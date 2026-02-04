@@ -38,7 +38,6 @@ import {
   ContactMessage,
 } from "@/hooks/useContactMessages";
 import { format, formatDistanceToNow } from "date-fns";
-import { bn } from "date-fns/locale";
 import { toast } from "sonner";
 
 export default function MessagesManager() {
@@ -72,7 +71,7 @@ export default function MessagesManager() {
   const handleArchive = (id: string) => {
     archiveMessage.mutate(id, {
       onSuccess: () => {
-        toast.success("মেসেজ আর্কাইভ করা হয়েছে");
+        toast.success("Message archived");
         setIsDetailOpen(false);
       },
     });
@@ -82,7 +81,7 @@ export default function MessagesManager() {
     if (deleteId) {
       deleteMessage.mutate(deleteId, {
         onSuccess: () => {
-          toast.success("মেসেজ মুছে ফেলা হয়েছে");
+          toast.success("Message deleted");
           setDeleteId(null);
           setIsDetailOpen(false);
         },
@@ -104,16 +103,16 @@ export default function MessagesManager() {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           <Mail className="w-6 h-6 text-accent" />
-          <h1 className="text-2xl font-bold text-foreground">মেসেজ ইনবক্স</h1>
+          <h1 className="text-2xl font-bold text-foreground">Message Inbox</h1>
         </div>
         <div className="flex items-center gap-2">
           {unreadCount > 0 && (
             <Badge variant="destructive" className="animate-pulse">
-              {unreadCount} নতুন
+              {unreadCount} New
             </Badge>
           )}
           <Badge variant="outline" className="text-sm">
-            মোট {messages?.length || 0} টি মেসেজ
+            Total {messages?.length || 0} Messages
           </Badge>
         </div>
       </div>
@@ -122,7 +121,7 @@ export default function MessagesManager() {
       <div className="relative">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
         <Input
-          placeholder="নাম, ইমেইল বা মেসেজ দিয়ে খুঁজুন..."
+          placeholder="Search by name, email or message..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           className="pl-10"
@@ -134,7 +133,7 @@ export default function MessagesManager() {
         {filteredMessages.length === 0 ? (
           <div className="text-center py-16 bg-card rounded-xl border border-border">
             <Mail className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
-            <p className="text-muted-foreground">কোনো মেসেজ পাওয়া যায়নি</p>
+            <p className="text-muted-foreground">No messages found</p>
           </div>
         ) : (
           <AnimatePresence>
@@ -181,7 +180,6 @@ export default function MessagesManager() {
                       <span className="text-xs text-muted-foreground whitespace-nowrap ml-2">
                         {formatDistanceToNow(new Date(message.created_at), {
                           addSuffix: true,
-                          locale: bn,
                         })}
                       </span>
                     </div>
@@ -231,7 +229,7 @@ export default function MessagesManager() {
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <Mail className="w-5 h-5 text-accent" />
-              মেসেজ বিস্তারিত
+              Message Details
             </DialogTitle>
           </DialogHeader>
 
@@ -261,7 +259,7 @@ export default function MessagesManager() {
                   {selectedMessage.is_read && (
                     <span className="flex items-center gap-1 text-green-500">
                       <CheckCircle className="w-4 h-4" />
-                      পড়া হয়েছে
+                      Read
                     </span>
                   )}
                 </div>
@@ -269,7 +267,7 @@ export default function MessagesManager() {
 
               {/* Message Content */}
               <div className="p-4 border border-border rounded-lg">
-                <h4 className="text-sm font-medium text-muted-foreground mb-2">মেসেজ</h4>
+                <h4 className="text-sm font-medium text-muted-foreground mb-2">Message</h4>
                 <p className="text-foreground whitespace-pre-wrap leading-relaxed">
                   {selectedMessage.message}
                 </p>
@@ -283,7 +281,7 @@ export default function MessagesManager() {
                   className="gap-2"
                 >
                   <Archive className="w-4 h-4" />
-                  আর্কাইভ
+                  Archive
                 </Button>
                 <div className="flex gap-2">
                   <Button
@@ -292,12 +290,12 @@ export default function MessagesManager() {
                     className="gap-2"
                   >
                     <Trash2 className="w-4 h-4" />
-                    মুছে ফেলুন
+                    Delete
                   </Button>
                   <Button asChild className="gap-2">
                     <a href={`mailto:${selectedMessage.email}`}>
                       <Mail className="w-4 h-4" />
-                      উত্তর দিন
+                      Reply
                     </a>
                   </Button>
                 </div>
@@ -311,18 +309,18 @@ export default function MessagesManager() {
       <AlertDialog open={!!deleteId} onOpenChange={() => setDeleteId(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>মেসেজ মুছে ফেলতে চান?</AlertDialogTitle>
+            <AlertDialogTitle>Delete this message?</AlertDialogTitle>
             <AlertDialogDescription>
-              এই মেসেজটি স্থায়ীভাবে মুছে ফেলা হবে এবং পুনরুদ্ধার করা যাবে না।
+              This message will be permanently deleted and cannot be recovered.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>বাতিল</AlertDialogCancel>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
             <AlertDialogAction
               onClick={handleDelete}
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
-              মুছে ফেলুন
+              Delete
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
