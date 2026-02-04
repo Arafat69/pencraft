@@ -45,19 +45,18 @@ export default function Header() {
           {/* Logo */}
           <Link to="/" className="flex items-center gap-3 group">
             <div className="relative">
-              <div className="w-11 h-11 bg-gradient-to-br from-accent via-primary to-accent/70 rounded-xl flex items-center justify-center shadow-lg shadow-accent/20 group-hover:shadow-accent/40 transition-shadow duration-300">
-                <span className="text-primary-foreground font-display font-bold text-xl tracking-tight">
-                  আ
+              <div className="w-10 h-10 bg-gradient-to-br from-accent to-primary rounded-lg flex items-center justify-center shadow-lg shadow-accent/25 group-hover:shadow-accent/40 group-hover:scale-105 transition-all duration-300">
+                <span className="text-primary-foreground font-display font-bold text-lg">
+                  A
                 </span>
               </div>
-              <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 rounded-full border-2 border-background" />
             </div>
-            <div className="hidden sm:flex flex-col -space-y-1">
-              <span className="font-display text-lg font-bold text-foreground tracking-tight">
-                Arafat Rahman
+            <div className="hidden sm:flex flex-col">
+              <span className="font-display text-base font-bold text-foreground tracking-tight leading-tight">
+                Arafat Dihan
               </span>
-              <span className="text-xs text-accent font-medium">
-                Personal Blog
+              <span className="text-[10px] text-muted-foreground font-medium uppercase tracking-widest">
+                Portfolio
               </span>
             </div>
           </Link>
