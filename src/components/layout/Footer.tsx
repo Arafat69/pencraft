@@ -36,19 +36,17 @@ export default function Footer() {
           {/* Brand */}
           <div className="lg:col-span-2">
             <Link to="/" className="flex items-center gap-3 mb-4 group">
-              <div className="relative">
-                <div className="w-12 h-12 bg-gradient-to-br from-accent via-primary to-accent/70 rounded-xl flex items-center justify-center shadow-lg shadow-accent/20">
-                  <span className="text-primary-foreground font-display font-bold text-2xl">
-                    আ
-                  </span>
-                </div>
+              <div className="w-12 h-12 bg-gradient-to-br from-accent to-primary rounded-lg flex items-center justify-center shadow-lg shadow-accent/25">
+                <span className="text-primary-foreground font-display font-bold text-2xl">
+                  A
+                </span>
               </div>
-              <div className="flex flex-col -space-y-1">
+              <div className="flex flex-col">
                 <span className="font-display text-xl font-bold text-foreground">
                   Arafat Rahman Dihan
                 </span>
-                <span className="text-xs text-accent font-medium">
-                  Writer • Creator • Dreamer
+                <span className="text-xs text-muted-foreground font-medium uppercase tracking-widest">
+                  Writer • Developer • Creator
                 </span>
               </div>
             </Link>

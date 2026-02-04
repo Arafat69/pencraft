@@ -70,16 +70,16 @@ export default function Index() {
                 transition={{ delay: 0.1 }}
                 className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent/10 border border-accent/20 text-accent text-sm font-medium mb-6"
               >
-                <span className="animate-pulse">👋</span>
-                আসসালামু আলাইকুম
+                <span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
+                Available for Work
               </motion.div>
 
               {/* Name with stylish typography */}
               <h1 className="font-display text-4xl sm:text-5xl lg:text-6xl font-bold text-foreground leading-tight mb-4">
-                আমি{" "}
+                Hi, I'm{" "}
                 <span className="relative inline-block">
                   <span className="relative z-10 bg-gradient-to-r from-accent via-primary to-accent bg-clip-text text-transparent">
-                    আরাফাত রহমান দিহান
+                    Arafat Dihan
                   </span>
                   <motion.span
                     initial={{ scaleX: 0 }}
@@ -90,18 +90,17 @@ export default function Index() {
                 </span>
               </h1>
 
-              <p className="font-bengali text-lg lg:text-xl text-muted-foreground leading-relaxed mb-6">
-                একজন লেখক, স্বপ্নদ্রষ্টা এবং সৃজনশীল মানুষ। এখানে আমি আমার চিন্তা, অভিজ্ঞতা এবং গল্প শেয়ার করি।
+              <p className="text-lg lg:text-xl text-muted-foreground leading-relaxed mb-6">
+                A passionate <span className="text-foreground font-medium">writer</span>, <span className="text-foreground font-medium">developer</span>, and <span className="text-foreground font-medium">creative thinker</span>. I share my thoughts, experiences, and stories here.
               </p>
 
               {/* Stats or quick info */}
               <div className="flex flex-wrap justify-center lg:justify-start gap-6 mb-8">
-                <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-                  <span>Available for collaboration</span>
-                </div>
                 <div className="text-sm text-muted-foreground">
                   <span className="font-semibold text-foreground">{posts.length}+</span> Articles
+                </div>
+                <div className="text-sm text-muted-foreground">
+                  <span className="font-semibold text-foreground">5+</span> Years Experience
                 </div>
               </div>
 
@@ -110,14 +109,14 @@ export default function Index() {
                   to="/blog"
                   className="inline-flex items-center gap-2 px-6 py-3 bg-accent text-accent-foreground rounded-xl font-medium hover:bg-accent/90 transition-all shadow-lg shadow-accent/25 hover:shadow-accent/40 hover:-translate-y-0.5"
                 >
-                  আমার লেখাগুলো
+                  Read My Blog
                   <ArrowRight className="w-4 h-4" />
                 </Link>
                 <Link
                   to="/about"
                   className="inline-flex items-center gap-2 px-6 py-3 bg-secondary text-secondary-foreground rounded-xl font-medium hover:bg-muted transition-colors border border-border"
                 >
-                  আমার সম্পর্কে
+                  About Me
                 </Link>
               </div>
             </motion.div>
@@ -339,7 +338,7 @@ export default function Index() {
               <div className="flex items-center gap-3">
                 <Eye className="w-5 h-5 text-accent" />
                 <h2 className="font-display text-2xl lg:text-3xl font-semibold text-foreground">
-                  সবচেয়ে বেশি পঠিত
+                  Most Read
                 </h2>
               </div>
               <Link
