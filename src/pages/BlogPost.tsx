@@ -402,57 +402,57 @@ export default function BlogPost() {
           <div className="flex flex-col lg:flex-row gap-12">
             {/* Sticky Sidebar - Social & Actions (Desktop Only) */}
             <aside className="hidden lg:block lg:w-16">
-              <div className="lg:sticky lg:top-24 flex flex-col items-center gap-3">
+              <div className="lg:sticky lg:top-24 flex flex-col items-center gap-3 p-3 bg-card/50 backdrop-blur-sm rounded-2xl border border-border/30">
                 <button
                   onClick={toggleLike}
-                  className={`p-3 rounded-full transition-colors ${
+                  className={`p-3 rounded-full transition-all duration-200 ${
                     liked
-                      ? "bg-accent text-accent-foreground"
-                      : "bg-secondary text-muted-foreground hover:text-foreground"
+                      ? "bg-accent text-accent-foreground shadow-lg shadow-accent/30"
+                      : "bg-secondary text-muted-foreground hover:text-foreground hover:bg-secondary/80"
                   }`}
                 >
-                  <Heart className={`w-5 h-5 ${liked ? "fill-current" : ""}`} />
+                  <Heart className={`w-5 h-5 transition-transform ${liked ? "fill-current scale-110" : "hover:scale-110"}`} />
                 </button>
-                <span className="text-sm text-muted-foreground">
+                <span className="text-sm font-medium text-muted-foreground">
                   {formatNumber(likeCount)}
                 </span>
 
                 <button
                   onClick={toggleBookmark}
-                  className={`p-3 rounded-full transition-colors ${
+                  className={`p-3 rounded-full transition-all duration-200 ${
                     bookmarked
-                      ? "bg-primary text-primary-foreground"
-                      : "bg-secondary text-muted-foreground hover:text-foreground"
+                      ? "bg-primary text-primary-foreground shadow-lg"
+                      : "bg-secondary text-muted-foreground hover:text-foreground hover:bg-secondary/80"
                   }`}
                 >
                   <Bookmark
-                    className={`w-5 h-5 ${bookmarked ? "fill-current" : ""}`}
+                    className={`w-5 h-5 transition-transform ${bookmarked ? "fill-current scale-110" : "hover:scale-110"}`}
                   />
                 </button>
 
-                <div className="w-px h-8 bg-border my-2" />
+                <div className="w-6 h-px bg-border my-2" />
 
                 <button
                   onClick={() => handleShare("twitter")}
-                  className="p-3 rounded-full bg-secondary text-muted-foreground hover:text-foreground transition-colors"
+                  className="p-3 rounded-full bg-secondary text-muted-foreground hover:text-foreground hover:bg-secondary/80 transition-all duration-200 hover:scale-105"
                 >
                   <Twitter className="w-5 h-5" />
                 </button>
                 <button
                   onClick={() => handleShare("linkedin")}
-                  className="p-3 rounded-full bg-secondary text-muted-foreground hover:text-foreground transition-colors"
+                  className="p-3 rounded-full bg-secondary text-muted-foreground hover:text-foreground hover:bg-secondary/80 transition-all duration-200 hover:scale-105"
                 >
                   <Linkedin className="w-5 h-5" />
                 </button>
                 <button
                   onClick={() => handleShare("facebook")}
-                  className="p-3 rounded-full bg-secondary text-muted-foreground hover:text-foreground transition-colors"
+                  className="p-3 rounded-full bg-secondary text-muted-foreground hover:text-foreground hover:bg-secondary/80 transition-all duration-200 hover:scale-105"
                 >
                   <Facebook className="w-5 h-5" />
                 </button>
                 <button
                   onClick={() => handleShare("copy")}
-                  className="p-3 rounded-full bg-secondary text-muted-foreground hover:text-foreground transition-colors"
+                  className="p-3 rounded-full bg-secondary text-muted-foreground hover:text-foreground hover:bg-secondary/80 transition-all duration-200 hover:scale-105"
                 >
                   <Share2 className="w-5 h-5" />
                 </button>
@@ -464,13 +464,13 @@ export default function BlogPost() {
               <div className="prose-blog">{renderContent(post.content)}</div>
 
               {/* Tags */}
-              <div className="mt-10 pt-6 border-t border-border">
+              <div className="mt-10 pt-6 border-t border-border/50">
                 <div className="flex flex-wrap gap-2">
                   {post.tags.map((tag) => (
                     <Link
                       key={tag.id}
                       to={`/tag/${tag.slug}`}
-                      className="px-3 py-1.5 bg-secondary text-sm text-muted-foreground rounded-full hover:bg-muted hover:text-foreground transition-colors"
+                      className="px-3 py-1.5 bg-secondary/60 text-sm text-muted-foreground rounded-full hover:bg-accent hover:text-accent-foreground transition-all duration-200 border border-transparent hover:border-accent/30"
                     >
                       #{tag.name}
                     </Link>
@@ -479,13 +479,13 @@ export default function BlogPost() {
               </div>
 
               {/* Author Box */}
-              <div className="mt-10 p-6 bg-card rounded-xl">
+              <div className="mt-10 p-6 bg-card rounded-xl border border-border/30 shadow-soft">
                 <div className="flex flex-col sm:flex-row gap-4">
                   <Link to={`/author/${post.author.id}`}>
                     <img
                       src={post.author.avatar}
                       alt={post.author.name}
-                      className="w-16 h-16 rounded-full object-cover"
+                      className="w-16 h-16 rounded-full object-cover ring-2 ring-border/50 hover:ring-accent/50 transition-all duration-200"
                     />
                   </Link>
                   <div className="flex-1">
