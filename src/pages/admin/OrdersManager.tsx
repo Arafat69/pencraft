@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Package, Search, Eye, Loader2, Calendar, User, MapPin, Phone, ChevronDown } from "lucide-react";
+import { Package, Search, Eye, Loader2, Calendar, User, MapPin, Phone, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -17,6 +17,17 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import {
   Table,
   TableBody,
   TableCell,
@@ -25,7 +36,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { useAllOrders, useUpdateOrderStatus, OrderWithItems } from "@/hooks/useOrders";
+import { useAllOrders, useUpdateOrderStatus, useDeleteOrder, OrderWithItems } from "@/hooks/useOrders";
 import { format } from "date-fns";
 
 const statusColors: Record<string, string> = {
@@ -47,10 +58,20 @@ const statusLabels: Record<string, string> = {
 export default function OrdersManager() {
   const { data: orders, isLoading } = useAllOrders();
   const updateStatus = useUpdateOrderStatus();
+  const deleteOrder = useDeleteOrder();
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [selectedOrder, setSelectedOrder] = useState<OrderWithItems | null>(null);
   const [isDetailOpen, setIsDetailOpen] = useState(false);
+
+  const handleDeleteOrder = (orderId: string) => {
+    deleteOrder.mutate(orderId, {
+      onSuccess: () => {
+        setIsDetailOpen(false);
+        setSelectedOrder(null);
+      },
+    });
+  };
 
   const filteredOrders = (orders || []).filter((order) => {
     const matchesSearch =
@@ -181,15 +202,45 @@ export default function OrdersManager() {
                     </Select>
                   </TableCell>
                   <TableCell className="text-right">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => viewOrderDetails(order)}
-                      className="gap-1"
-                    >
-                      <Eye className="w-4 h-4" />
-                      Details
-                    </Button>
+                    <div className="flex items-center justify-end gap-1">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => viewOrderDetails(order)}
+                        className="gap-1"
+                      >
+                        <Eye className="w-4 h-4" />
+                        Details
+                      </Button>
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="text-destructive hover:text-destructive hover:bg-destructive/10"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>Delete Order</AlertDialogTitle>
+                            <AlertDialogDescription>
+                              Are you sure you want to delete this order? This action cannot be undone.
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            <AlertDialogAction
+                              onClick={() => handleDeleteOrder(order.id)}
+                              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                            >
+                              Delete
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
+                    </div>
                   </TableCell>
                 </motion.tr>
               ))
@@ -311,6 +362,35 @@ export default function OrdersManager() {
                     <SelectItem value="cancelled">Cancelled</SelectItem>
                   </SelectContent>
                 </Select>
+              </div>
+
+              {/* Delete Order Button */}
+              <div className="flex justify-end pt-4 border-t border-border">
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button variant="destructive" className="gap-2">
+                      <Trash2 className="w-4 h-4" />
+                      Delete Order
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Delete Order</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        Are you sure you want to delete this order? This action cannot be undone.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                      <AlertDialogAction
+                        onClick={() => handleDeleteOrder(selectedOrder.id)}
+                        className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                      >
+                        Delete
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
               </div>
             </div>
           )}
