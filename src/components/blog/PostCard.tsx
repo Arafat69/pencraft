@@ -24,7 +24,7 @@ export default function PostCard({
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: index * 0.1 }}
-        className="group relative overflow-hidden rounded-2xl bg-card shadow-soft card-hover"
+        className="group relative overflow-hidden rounded-2xl bg-card shadow-soft card-hover border border-border/30"
       >
         <Link to={`/blog/${post.slug}`}>
           <div className="aspect-[16/9] overflow-hidden">
@@ -36,12 +36,12 @@ export default function PostCard({
             />
           </div>
           {/* Extended gradient for better text readability */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/50 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 to-transparent" />
           {/* Text container with backdrop blur */}
           <div className="absolute bottom-0 left-0 right-0 p-6 lg:p-8">
             <div className="relative">
               {/* Blur background behind text */}
-              <div className="absolute inset-0 -m-4 bg-black/30 backdrop-blur-md rounded-xl" />
+              <div className="absolute inset-0 -m-4 bg-black/40 backdrop-blur-xl rounded-xl border border-white/10" />
               <div className="relative text-white">
                 <h3 className={`text-2xl lg:text-3xl font-semibold mb-2 line-clamp-2 drop-shadow-lg ${isBengali ? 'font-bengali-display' : 'font-display'}`}>
                   {post.title}
@@ -63,7 +63,7 @@ export default function PostCard({
         initial={{ opacity: 0, x: 20 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ delay: index * 0.1 }}
-        className="group flex gap-4 p-4 rounded-xl bg-card hover:bg-secondary/50 transition-colors"
+        className="group flex gap-4 p-4 rounded-xl bg-card/50 hover:bg-secondary/60 transition-all duration-300 border border-transparent hover:border-border/50"
       >
         <Link to={`/blog/${post.slug}`} className="shrink-0">
           <div className="w-24 h-24 rounded-lg overflow-hidden">
@@ -106,7 +106,7 @@ export default function PostCard({
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.1 }}
-      className="group bg-card rounded-xl overflow-hidden shadow-soft card-hover"
+      className="group bg-card rounded-xl overflow-hidden shadow-soft card-hover border border-border/30 hover:border-border/60"
     >
       <Link to={`/blog/${post.slug}`}>
         <div className="aspect-[16/10] overflow-hidden">
@@ -118,11 +118,11 @@ export default function PostCard({
           />
         </div>
       </Link>
-      <div className="p-5">
+      <div className="p-5 bg-gradient-to-b from-transparent to-secondary/20">
         <div className="flex items-center gap-2 mb-3">
           <Link to={`/category/${post.category.slug}`}>
             <span
-              className="px-2.5 py-1 text-xs font-medium rounded-full text-primary-foreground"
+              className="px-2.5 py-1 text-xs font-medium rounded-full text-white shadow-sm"
               style={{ backgroundColor: post.category.color }}
             >
               {post.category.name}

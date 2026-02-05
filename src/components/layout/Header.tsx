@@ -39,38 +39,38 @@ export default function Header() {
   };
 
   return (
-    <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-lg border-b border-border">
+    <header className="sticky top-0 z-50 bg-background/90 backdrop-blur-xl border-b border-border/50 shadow-sm">
       <nav className="container-blog">
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-3 group">
             <div className="relative">
-              <div className="w-10 h-10 bg-gradient-to-br from-accent to-primary rounded-lg flex items-center justify-center shadow-lg shadow-accent/25 group-hover:shadow-accent/40 group-hover:scale-105 transition-all duration-300">
+              <div className="w-10 h-10 bg-gradient-to-br from-accent via-orange-500 to-primary rounded-xl flex items-center justify-center shadow-lg shadow-accent/30 group-hover:shadow-accent/50 group-hover:scale-105 transition-all duration-300">
                 <span className="text-primary-foreground font-display font-bold text-lg">
                   A
                 </span>
               </div>
             </div>
             <div className="hidden sm:flex flex-col">
-              <span className="font-display text-base font-bold text-foreground tracking-tight leading-tight">
+              <span className="font-display text-base font-bold text-foreground tracking-tight leading-tight bg-gradient-to-r from-foreground to-foreground/80 bg-clip-text">
                 Arafat Dihan
               </span>
-              <span className="text-[10px] text-muted-foreground font-medium uppercase tracking-widest">
+              <span className="text-[10px] text-muted-foreground/80 font-medium uppercase tracking-[0.2em]">
                 Portfolio
               </span>
             </div>
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden lg:flex items-center gap-8">
+          <div className="hidden lg:flex items-center gap-6">
             {navigation.map((item) => (
               <Link
                 key={item.name}
                 to={item.href}
-                className={`text-sm font-medium transition-colors link-underline ${
+                className={`text-sm font-medium transition-all duration-200 link-underline px-1 ${
                   location.pathname === item.href
                     ? "text-foreground"
-                    : "text-muted-foreground hover:text-foreground"
+                    : "text-muted-foreground hover:text-foreground hover:translate-y-[-1px]"
                 }`}
               >
                 {item.name}
