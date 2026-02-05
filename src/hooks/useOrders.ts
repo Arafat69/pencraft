@@ -119,10 +119,43 @@ export function useUpdateOrderStatus() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["all-orders"] });
       queryClient.invalidateQueries({ queryKey: ["orders"] });
-      toast.success("অর্ডার স্ট্যাটাস আপডেট হয়েছে");
+      toast.success("Order status updated");
     },
     onError: (error: Error) => {
-      toast.error(error.message || "স্ট্যাটাস আপডেট করতে সমস্যা হয়েছে");
+      toast.error(error.message || "Failed to update status");
+    },
+  });
+}
+
+export function useDeleteOrder() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (orderId: string) => {
+      // First delete order items
+      const { error: itemsError } = await supabase
+        .from("order_items")
+        .delete()
+        .eq("order_id", orderId);
+
+      if (itemsError) throw itemsError;
+
+      // Then delete the order
+      const { error } = await supabase
+        .from("orders")
+        .delete()
+        .eq("id", orderId);
+
+      if (error) throw error;
+      return orderId;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["all-orders"] });
+      queryClient.invalidateQueries({ queryKey: ["orders"] });
+      toast.success("Order deleted successfully");
+    },
+    onError: (error: Error) => {
+      toast.error(error.message || "Failed to delete order");
     },
   });
 }
@@ -196,9 +229,10 @@ export function useCreateOrder() {
       queryClient.invalidateQueries({ queryKey: ["orders"] });
       queryClient.invalidateQueries({ queryKey: ["cart"] });
       toast.success("অর্ডার সফলভাবে সম্পন্ন হয়েছে!");
+      toast.success("Order placed successfully!");
     },
     onError: (error: Error) => {
-      toast.error(error.message || "অর্ডার দিতে সমস্যা হয়েছে");
+      toast.error(error.message || "Failed to place order");
     },
   });
 }

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Camera, User, BookOpen, LogOut, Loader2 } from "lucide-react";
 import Layout from "@/components/layout/Layout";
@@ -10,7 +10,8 @@ import { Label } from "@/components/ui/label";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { posts, Post } from "@/lib/data";
+import { usePosts } from "@/hooks/usePosts";
+import { mapDbPost, Post } from "@/lib/data";
 
 interface Profile {
   id: string;
@@ -21,12 +22,18 @@ interface Profile {
 export default function Profile() {
   const { user, signOut, loading: authLoading } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const [profile, setProfile] = useState<Profile | null>(null);
   const [bookmarkedPosts, setBookmarkedPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
   const [username, setUsername] = useState("");
   const [saving, setSaving] = useState(false);
+  const [bookmarkSlugs, setBookmarkSlugs] = useState<string[]>([]);
+
+  // Fetch all posts from database
+  const { data: dbPosts, isLoading: postsLoading } = usePosts();
+  const allPosts = (dbPosts || []).map(mapDbPost);
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -40,6 +47,21 @@ export default function Profile() {
       fetchBookmarks();
     }
   }, [user]);
+
+  // Update bookmarked posts when allPosts or bookmarkSlugs change
+  useEffect(() => {
+    if (bookmarkSlugs.length > 0 && allPosts.length > 0) {
+      const savedPosts = allPosts.filter((p) => bookmarkSlugs.includes(p.slug));
+      setBookmarkedPosts(savedPosts);
+    }
+  }, [allPosts.length, bookmarkSlugs]);
+
+  // Refetch bookmarks when returning to profile page
+  useEffect(() => {
+    if (user && location.pathname === "/profile") {
+      fetchBookmarks();
+    }
+  }, [location.pathname, user]);
 
   const fetchProfile = async () => {
     if (!user) return;
@@ -77,8 +99,13 @@ export default function Profile() {
     }
 
     const slugs = data?.map((b) => b.post_slug) || [];
-    const savedPosts = posts.filter((p) => slugs.includes(p.slug));
-    setBookmarkedPosts(savedPosts);
+    setBookmarkSlugs(slugs);
+    
+    // If allPosts is already loaded, set bookmarked posts immediately
+    if (allPosts.length > 0) {
+      const savedPosts = allPosts.filter((p) => slugs.includes(p.slug));
+      setBookmarkedPosts(savedPosts);
+    }
   };
 
   const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -163,7 +190,7 @@ export default function Profile() {
     navigate("/");
   };
 
-  if (authLoading || loading) {
+  if (authLoading || loading || postsLoading) {
     return (
       <Layout>
         <div className="container-blog py-16 flex items-center justify-center">
