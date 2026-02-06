@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ArrowRight, TrendingUp, Sparkles, Loader2, Eye, Heart } from "lucide-react";
@@ -15,6 +15,7 @@ import { useAuthors } from "@/hooks/useAuthors";
 import { mapDbPost, mapDbCategory, mapDbAuthor, formatNumber } from "@/lib/data";
 import { useRealtimeStats } from "@/hooks/useRealtimeStats";
 import { Button } from "@/components/ui/button";
+
 export default function Index() {
   const { data: dbPosts, isLoading: postsLoading } = usePosts();
   const { data: dbFeaturedPosts, isLoading: featuredLoading } = useFeaturedPosts();
@@ -22,16 +23,18 @@ export default function Index() {
   const { data: dbCategories, isLoading: categoriesLoading } = useCategories();
   const { data: dbAuthors, isLoading: authorsLoading } = useAuthors();
 
-  const posts = (dbPosts || []).map(mapDbPost);
-  const featuredPosts = (dbFeaturedPosts || []).map(mapDbPost);
-  const trendingPosts = (dbTrendingPosts || []).map(mapDbPost);
-  const categories = (dbCategories || []).map(mapDbCategory);
-  const authors = (dbAuthors || []).map(mapDbAuthor);
+  const posts = useMemo(() => (dbPosts || []).map(mapDbPost), [dbPosts]);
+  const featuredPosts = useMemo(() => (dbFeaturedPosts || []).map(mapDbPost), [dbFeaturedPosts]);
+  const trendingPosts = useMemo(() => (dbTrendingPosts || []).map(mapDbPost), [dbTrendingPosts]);
+  const categories = useMemo(() => (dbCategories || []).map(mapDbCategory), [dbCategories]);
+  const authors = useMemo(() => (dbAuthors || []).map(mapDbAuthor), [dbAuthors]);
 
-  // Real-time stats
-  const { getStats } = useRealtimeStats(
-    posts.map((p) => ({ slug: p.slug, views: p.views, likes: p.likes }))
+  // Real-time stats - memoize the input array to prevent infinite loop
+  const postsForStats = useMemo(
+    () => posts.map((p) => ({ slug: p.slug, views: p.views, likes: p.likes })),
+    [posts]
   );
+  const { getStats } = useRealtimeStats(postsForStats);
 
   const latestPosts = posts.slice(0, 6);
 

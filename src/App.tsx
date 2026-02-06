@@ -41,6 +41,7 @@ import OrdersManager from "./pages/admin/OrdersManager";
 import MessagesManager from "./pages/admin/MessagesManager";
 import PopupManager from "./pages/admin/PopupManager";
 import ProductDetail from "./pages/ProductDetail";
+import SearchPage from "./pages/Search";
 import { useEffect } from "react";
 
 const queryClient = new QueryClient();
@@ -84,7 +85,7 @@ const App = () => (
               <Route path="/auth" element={<Auth />} />
               <Route path="/login" element={<Auth />} />
               <Route path="/profile" element={<Profile />} />
-              <Route path="/search" element={<BlogList />} />
+              <Route path="/search" element={<SearchPage />} />
               <Route path="/admin-login" element={<AdminLogin />} />
               <Route path="/admin" element={<AdminDashboard />}>
                 <Route path="authors" element={<AuthorsManager />} />

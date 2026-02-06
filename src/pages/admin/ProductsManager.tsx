@@ -44,6 +44,7 @@ export default function ProductsManager() {
     stock_quantity: "",
     category: "",
     is_active: true,
+    secret_keywords: "",
   });
 
   const resetForm = () => {
@@ -55,6 +56,7 @@ export default function ProductsManager() {
       stock_quantity: "",
       category: "",
       is_active: true,
+      secret_keywords: "",
     });
     setEditingProduct(null);
   };
@@ -69,6 +71,7 @@ export default function ProductsManager() {
       stock_quantity: product.stock_quantity.toString(),
       category: product.category || "",
       is_active: product.is_active,
+      secret_keywords: ((product as unknown as { secret_keywords?: string[] }).secret_keywords || []).join(", "),
     });
     setIsDialogOpen(true);
   };
@@ -76,6 +79,12 @@ export default function ProductsManager() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
+    // Parse secret keywords from comma-separated string
+    const secretKeywords = formData.secret_keywords
+      .split(",")
+      .map((k) => k.trim())
+      .filter((k) => k.length > 0);
+
     const productData = {
       name: formData.name,
       description: formData.description || null,
@@ -84,6 +93,7 @@ export default function ProductsManager() {
       stock_quantity: parseInt(formData.stock_quantity) || 0,
       category: formData.category || null,
       is_active: formData.is_active,
+      secret_keywords: secretKeywords,
     };
 
     if (editingProduct) {
@@ -205,6 +215,19 @@ export default function ProductsManager() {
                   checked={formData.is_active}
                   onCheckedChange={(checked) => setFormData({ ...formData, is_active: checked })}
                 />
+              </div>
+
+              <div>
+                <label className="text-sm font-medium">Secret Keywords (Hidden from users)</label>
+                <Input
+                  value={formData.secret_keywords}
+                  onChange={(e) => setFormData({ ...formData, secret_keywords: e.target.value })}
+                  placeholder="keyword1, keyword2, keyword3 (comma-separated)"
+                  className="mt-1"
+                />
+                <p className="text-xs text-muted-foreground mt-1">
+                  Help users find this product via search without showing these keywords.
+                </p>
               </div>
 
               <div className="flex gap-3 justify-end pt-4">

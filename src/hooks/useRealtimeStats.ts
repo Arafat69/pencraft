@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 
 interface PostStats {
@@ -9,22 +9,21 @@ interface PostStats {
 }
 
 export function useRealtimeStats(initialPosts: { slug: string; views: number; likes: number }[]) {
-  const [stats, setStats] = useState<PostStats>(() => {
+  // Memoize the initial stats computation
+  const initialStats = useMemo(() => {
     const initial: PostStats = {};
     initialPosts.forEach((post) => {
       initial[post.slug] = { views: post.views || 0, likes: post.likes || 0 };
     });
     return initial;
-  });
+  }, [JSON.stringify(initialPosts.map(p => ({ slug: p.slug, views: p.views, likes: p.likes })))]);
 
+  const [stats, setStats] = useState<PostStats>(initialStats);
+
+  // Update stats when initialStats changes (only when actual data changes)
   useEffect(() => {
-    // Update stats when initialPosts changes
-    const newStats: PostStats = {};
-    initialPosts.forEach((post) => {
-      newStats[post.slug] = { views: post.views || 0, likes: post.likes || 0 };
-    });
-    setStats(newStats);
-  }, [initialPosts]);
+    setStats(initialStats);
+  }, [initialStats]);
 
   useEffect(() => {
     // Listen for real-time likes

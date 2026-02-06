@@ -448,6 +448,7 @@ export type Database = {
           is_trending: boolean | null
           published_at: string | null
           read_time: string | null
+          secret_keywords: string[] | null
           slug: string
           title: string
           updated_at: string
@@ -464,6 +465,7 @@ export type Database = {
           is_trending?: boolean | null
           published_at?: string | null
           read_time?: string | null
+          secret_keywords?: string[] | null
           slug: string
           title: string
           updated_at?: string
@@ -480,6 +482,7 @@ export type Database = {
           is_trending?: boolean | null
           published_at?: string | null
           read_time?: string | null
+          secret_keywords?: string[] | null
           slug?: string
           title?: string
           updated_at?: string
@@ -546,6 +549,7 @@ export type Database = {
           is_active: boolean
           name: string
           price: number
+          secret_keywords: string[] | null
           stock_quantity: number
           updated_at: string
         }
@@ -558,6 +562,7 @@ export type Database = {
           is_active?: boolean
           name: string
           price?: number
+          secret_keywords?: string[] | null
           stock_quantity?: number
           updated_at?: string
         }
@@ -570,6 +575,7 @@ export type Database = {
           is_active?: boolean
           name?: string
           price?: number
+          secret_keywords?: string[] | null
           stock_quantity?: number
           updated_at?: string
         }

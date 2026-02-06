@@ -60,6 +60,7 @@ export default function PostForm() {
     is_trending: false,
     read_time: "5 min read",
     published: false,
+    secret_keywords: "",
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
 
@@ -95,6 +96,7 @@ export default function PostForm() {
             is_trending: data.is_trending || false,
             read_time: data.read_time || "5 min read",
             published: !!data.published_at,
+            secret_keywords: (data.secret_keywords || []).join(", "),
           });
 
           // Parse content blocks from JSON
@@ -223,6 +225,12 @@ export default function PostForm() {
     // Serialize content blocks to JSON
     const contentJson = JSON.stringify(contentBlocks);
 
+    // Parse secret keywords from comma-separated string
+    const secretKeywords = formData.secret_keywords
+      .split(",")
+      .map((k) => k.trim())
+      .filter((k) => k.length > 0);
+
     const postData = {
       title: formData.title,
       slug: formData.slug,
@@ -235,6 +243,7 @@ export default function PostForm() {
       is_trending: formData.is_trending,
       read_time: formData.read_time || "5 min read",
       published_at: formData.published ? new Date().toISOString() : null,
+      secret_keywords: secretKeywords,
     };
 
     let postId = id;
@@ -487,6 +496,23 @@ export default function PostForm() {
             selectedTags={selectedTags}
             onChange={setSelectedTags}
           />
+
+          {/* Secret Keywords */}
+          <div className="space-y-2">
+            <Label htmlFor="secret_keywords">
+              Secret Keywords (Hidden from users, used for search)
+            </Label>
+            <Input
+              id="secret_keywords"
+              name="secret_keywords"
+              value={formData.secret_keywords}
+              onChange={handleChange}
+              placeholder="keyword1, keyword2, keyword3 (comma-separated)"
+            />
+            <p className="text-xs text-muted-foreground">
+              These keywords won't be visible to users but will help them find this post via search.
+            </p>
+          </div>
 
           <div className="flex flex-wrap gap-6">
             <div className="flex items-center gap-3">
