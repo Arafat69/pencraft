@@ -478,60 +478,30 @@ export default function BlogPost() {
                 </div>
               </div>
 
-              {/* Author Box */}
-              <div className="mt-10 p-6 bg-card rounded-xl border border-border/30 shadow-soft">
-                <div className="flex flex-col sm:flex-row gap-4">
+              {/* Compact Author Display */}
+              <div className="mt-10 p-4 bg-card/50 rounded-xl border border-border/30">
+                <div className="flex items-center gap-4">
                   <Link to={`/author/${post.author.id}`}>
                     <img
                       src={post.author.avatar}
                       alt={post.author.name}
-                      className="w-16 h-16 rounded-full object-cover ring-2 ring-border/50 hover:ring-accent/50 transition-all duration-200"
+                      className="w-12 h-12 rounded-full object-cover ring-2 ring-border/50 hover:ring-accent/50 transition-all duration-200"
                     />
                   </Link>
                   <div className="flex-1">
-                    <Link to={`/author/${post.author.id}`}>
-                      <h4 className="font-display text-lg font-semibold text-foreground">
+                    <Link to={`/author/${post.author.id}`} className="hover:text-accent transition-colors">
+                      <h4 className="font-display font-semibold text-foreground">
                         {post.author.name}
                       </h4>
                     </Link>
-                    <p className="text-sm text-accent mb-2">{post.author.role}</p>
-                    <p className="text-sm text-muted-foreground">
-                      {post.author.bio}
-                    </p>
+                    <p className="text-sm text-muted-foreground">{post.author.role}</p>
                   </div>
+                  <Link to={`/author/${post.author.id}`}>
+                    <Button variant="outline" size="sm">
+                      View Profile
+                    </Button>
+                  </Link>
                 </div>
-              </div>
-
-              {/* Post Navigation */}
-              <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {prevPost && (
-                  <Link
-                    to={`/blog/${prevPost.slug}`}
-                    className="p-4 bg-card rounded-xl hover:bg-secondary/50 transition-colors group"
-                  >
-                    <span className="text-xs text-muted-foreground flex items-center gap-1 mb-2">
-                      <ArrowLeft className="w-3 h-3" />
-                      Previous
-                    </span>
-                    <h4 className="font-display text-sm font-medium text-foreground line-clamp-2 group-hover:text-accent transition-colors">
-                      {prevPost.title}
-                    </h4>
-                  </Link>
-                )}
-                {nextPost && (
-                  <Link
-                    to={`/blog/${nextPost.slug}`}
-                    className="p-4 bg-card rounded-xl hover:bg-secondary/50 transition-colors group text-right sm:ml-auto"
-                  >
-                    <span className="text-xs text-muted-foreground flex items-center justify-end gap-1 mb-2">
-                      Next
-                      <ArrowRight className="w-3 h-3" />
-                    </span>
-                    <h4 className="font-display text-sm font-medium text-foreground line-clamp-2 group-hover:text-accent transition-colors">
-                      {nextPost.title}
-                    </h4>
-                  </Link>
-                )}
               </div>
 
               {/* Comments Section */}
@@ -548,10 +518,10 @@ export default function BlogPost() {
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
               <div>
                 <h2 className="font-display text-2xl lg:text-3xl font-semibold text-foreground">
-                  আপনার জন্য সাজেস্টেড আর্টিকেল
+                  Suggested Articles
                 </h2>
                 <p className="text-muted-foreground mt-1">
-                  একই ট্যাগ ও ক্যাটাগরির উপর ভিত্তি করে
+                  Based on matching tags and categories
                 </p>
               </div>
             </div>
@@ -600,21 +570,50 @@ export default function BlogPost() {
                       >
                         {suggestedPost.category.name}
                       </span>
-                      <h3 className="font-bengali-display font-semibold text-foreground line-clamp-2 group-hover:text-accent transition-colors">
+                      <h3 className="font-display font-semibold text-foreground line-clamp-2 group-hover:text-accent transition-colors">
                         {suggestedPost.title}
                       </h3>
-                      <p className="font-bengali text-sm text-muted-foreground line-clamp-2">
+                      <p className="text-sm text-muted-foreground line-clamp-2">
                         {suggestedPost.excerpt}
                       </p>
                       <div className="flex items-center gap-2 text-xs text-muted-foreground">
                         <Clock className="w-3 h-3" />
-                        <span>{suggestedPost.readingTime} মিনিট</span>
+                        <span>{suggestedPost.readingTime} min read</span>
                       </div>
                     </div>
                   </Link>
                 </motion.div>
               ))}
             </div>
+
+            {/* Next Article Button */}
+            {nextPost && (
+              <div className="mt-10 text-center">
+                <Link to={`/blog/${nextPost.slug}`}>
+                  <Button size="lg" className="gap-2">
+                    Next Article
+                    <ArrowRight className="w-4 h-4" />
+                  </Button>
+                </Link>
+              </div>
+            )}
+          </div>
+        </section>
+      )}
+
+      {/* Next Article (if no suggested posts) */}
+      {suggestedPosts.length === 0 && nextPost && (
+        <section className="py-12 lg:py-16 bg-secondary/30">
+          <div className="container-blog text-center">
+            <h2 className="font-display text-2xl font-semibold text-foreground mb-4">
+              Continue Reading
+            </h2>
+            <Link to={`/blog/${nextPost.slug}`}>
+              <Button size="lg" className="gap-2">
+                Next Article: {nextPost.title.slice(0, 40)}{nextPost.title.length > 40 ? '...' : ''}
+                <ArrowRight className="w-4 h-4" />
+              </Button>
+            </Link>
           </div>
         </section>
       )}
