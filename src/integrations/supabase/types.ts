@@ -312,34 +312,49 @@ export type Database = {
       orders: {
         Row: {
           created_at: string
+          customer_name: string | null
+          district: string | null
+          division: string | null
           id: string
           notes: string | null
+          payment_method: string | null
           phone: string | null
           shipping_address: string | null
           status: string
           total_amount: number
+          transaction_id: string | null
           updated_at: string
           user_id: string
         }
         Insert: {
           created_at?: string
+          customer_name?: string | null
+          district?: string | null
+          division?: string | null
           id?: string
           notes?: string | null
+          payment_method?: string | null
           phone?: string | null
           shipping_address?: string | null
           status?: string
           total_amount?: number
+          transaction_id?: string | null
           updated_at?: string
           user_id: string
         }
         Update: {
           created_at?: string
+          customer_name?: string | null
+          district?: string | null
+          division?: string | null
           id?: string
           notes?: string | null
+          payment_method?: string | null
           phone?: string | null
           shipping_address?: string | null
           status?: string
           total_amount?: number
+          transaction_id?: string | null
           updated_at?: string
           user_id?: string
         }

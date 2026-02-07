@@ -31,10 +31,14 @@ export interface OrderWithItems extends Order {
 }
 
 interface CreateOrderInput {
-  shipping_address: string;
+  customer_name: string;
   phone: string;
+  division: string;
+  district: string;
+  shipping_address: string;
   notes?: string;
   payment_method: string;
+  transaction_id?: string;
 }
 
 export function useOrders() {
@@ -191,9 +195,14 @@ export function useCreateOrder() {
         .insert({
           user_id: user.id,
           total_amount: total,
-          shipping_address: input.shipping_address,
+          customer_name: input.customer_name,
           phone: input.phone,
+          division: input.division,
+          district: input.district,
+          shipping_address: input.shipping_address,
           notes: input.notes || null,
+          payment_method: input.payment_method,
+          transaction_id: input.transaction_id || null,
           status: "pending",
         })
         .select()

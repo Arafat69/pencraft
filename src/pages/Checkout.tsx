@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { motion } from "framer-motion";
 import { Link, useNavigate } from "react-router-dom";
 import {
@@ -7,49 +7,31 @@ import {
   Phone,
   FileText,
   CreditCard,
-  Banknote,
   Smartphone,
   CheckCircle2,
   Loader2,
   ArrowLeft,
   Package,
+  User,
 } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { useCart } from "@/hooks/useCart";
 import { useCreateOrder } from "@/hooks/useOrders";
 import { useAuth } from "@/contexts/AuthContext";
-
-const paymentMethods = [
-  {
-    id: "cod",
-    name: "ক্যাশ অন ডেলিভারি",
-    description: "পণ্য হাতে পেয়ে টাকা দিন",
-    icon: Banknote,
-  },
-  {
-    id: "bkash",
-    name: "বিকাশ",
-    description: "বিকাশ মোবাইল পেমেন্ট",
-    icon: Smartphone,
-  },
-  {
-    id: "nagad",
-    name: "নগদ",
-    description: "নগদ মোবাইল ব্যাংকিং",
-    icon: Smartphone,
-  },
-  {
-    id: "card",
-    name: "কার্ড পেমেন্ট",
-    description: "ভিসা/মাস্টারকার্ড",
-    icon: CreditCard,
-  },
-];
+import { divisions, districtsByDivision, paymentMethods } from "@/lib/bangladeshData";
+import PaymentModal from "@/components/checkout/PaymentModal";
+import { toast } from "sonner";
 
 export default function Checkout() {
   const { user } = useAuth();
@@ -58,16 +40,31 @@ export default function Checkout() {
   const createOrder = useCreateOrder();
 
   const [formData, setFormData] = useState({
-    fullName: "",
+    customerName: "",
     phone: "",
+    division: "",
+    district: "",
     address: "",
-    city: "",
-    area: "",
     notes: "",
   });
-  const [paymentMethod, setPaymentMethod] = useState("cod");
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<string>("");
+  const [transactionId, setTransactionId] = useState("");
+  const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
+  const [paymentConfirmed, setPaymentConfirmed] = useState(false);
   const [orderComplete, setOrderComplete] = useState(false);
   const [orderId, setOrderId] = useState<string | null>(null);
+  const [errors, setErrors] = useState<Record<string, string>>({});
+
+  // Get districts based on selected division
+  const availableDistricts = useMemo(() => {
+    if (!formData.division) return [];
+    return districtsByDivision[formData.division] || [];
+  }, [formData.division]);
+
+  // Get selected payment method details
+  const currentPaymentMethod = useMemo(() => {
+    return paymentMethods.find((m) => m.id === selectedPaymentMethod);
+  }, [selectedPaymentMethod]);
 
   if (!user) {
     return (
@@ -121,30 +118,112 @@ export default function Checkout() {
     (sum, item) => sum + (item.product?.price || 0) * item.quantity,
     0
   );
-  const shipping = 60; // Fixed shipping cost
+  const shipping = 60;
   const total = subtotal + shipping;
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+    // Clear error when user types
+    if (errors[name]) {
+      setErrors({ ...errors, [name]: "" });
+    }
+  };
+
+  const handleDivisionChange = (value: string) => {
+    setFormData({ ...formData, division: value, district: "" });
+    if (errors.division) {
+      setErrors({ ...errors, division: "" });
+    }
+  };
+
+  const handleDistrictChange = (value: string) => {
+    setFormData({ ...formData, district: value });
+    if (errors.district) {
+      setErrors({ ...errors, district: "" });
+    }
+  };
+
+  const handlePaymentMethodSelect = (methodId: string) => {
+    setSelectedPaymentMethod(methodId);
+    setPaymentConfirmed(false);
+    setTransactionId("");
+    setIsPaymentModalOpen(true);
+    if (errors.paymentMethod) {
+      setErrors({ ...errors, paymentMethod: "" });
+    }
+  };
+
+  const handlePaymentConfirm = () => {
+    setPaymentConfirmed(true);
+    setIsPaymentModalOpen(false);
+    toast.success("পেমেন্ট তথ্য সংরক্ষিত হয়েছে!");
+  };
+
+  const validateForm = () => {
+    const newErrors: Record<string, string> = {};
+
+    if (!formData.customerName.trim()) {
+      newErrors.customerName = "নাম দিন";
+    }
+
+    if (!formData.phone.trim()) {
+      newErrors.phone = "ফোন নম্বর দিন";
+    } else if (!/^01[3-9]\d{8}$/.test(formData.phone.trim())) {
+      newErrors.phone = "সঠিক বাংলাদেশি ফোন নম্বর দিন (যেমন: 01XXXXXXXXX)";
+    }
+
+    if (!formData.division) {
+      newErrors.division = "বিভাগ নির্বাচন করুন";
+    }
+
+    if (!formData.district) {
+      newErrors.district = "জেলা নির্বাচন করুন";
+    }
+
+    if (!formData.address.trim()) {
+      newErrors.address = "সম্পূর্ণ ঠিকানা দিন";
+    }
+
+    if (!selectedPaymentMethod) {
+      newErrors.paymentMethod = "পেমেন্ট মাধ্যম নির্বাচন করুন";
+    }
+
+    if (selectedPaymentMethod && !paymentConfirmed) {
+      newErrors.paymentMethod = "পেমেন্ট নিশ্চিত করুন";
+    }
+
+    if (selectedPaymentMethod && paymentConfirmed && !transactionId.trim()) {
+      newErrors.transactionId = "Transaction ID দিন";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!formData.fullName || !formData.phone || !formData.address || !formData.city) {
+    if (!validateForm()) {
+      toast.error("সব তথ্য সঠিকভাবে পূরণ করুন");
       return;
     }
 
-    const fullAddress = `${formData.fullName}, ${formData.address}, ${formData.area ? formData.area + ", " : ""}${formData.city}`;
+    const divisionName = divisions.find((d) => d.id === formData.division)?.name || "";
+    const districtName = availableDistricts.find((d) => d.id === formData.district)?.name || "";
 
     try {
       const order = await createOrder.mutateAsync({
-        shipping_address: fullAddress,
+        customer_name: formData.customerName,
         phone: formData.phone,
+        division: divisionName,
+        district: districtName,
+        shipping_address: formData.address,
         notes: formData.notes,
-        payment_method: paymentMethod,
+        payment_method: selectedPaymentMethod,
+        transaction_id: transactionId,
       });
 
       setOrderId(order.id);
@@ -175,15 +254,15 @@ export default function Checkout() {
               </motion.div>
 
               <h1 className="font-display text-2xl lg:text-3xl font-bold text-foreground mb-3">
-                অর্ডার সফল হয়েছে!
+                আপনার অর্ডার সফলভাবে সাবমিট হয়েছে!
               </h1>
               <p className="text-muted-foreground mb-6">
-                আপনার অর্ডার সফলভাবে সম্পন্ন হয়েছে। শীঘ্রই আমরা আপনার সাথে যোগাযোগ করব।
+                শীঘ্রই আমরা আপনার সাথে যোগাযোগ করব। ধন্যবাদ!
               </p>
 
               <div className="bg-secondary/50 rounded-xl p-4 mb-6">
                 <p className="text-sm text-muted-foreground mb-1">অর্ডার নম্বর</p>
-                <p className="font-mono font-semibold text-foreground">
+                <p className="font-mono font-semibold text-foreground text-lg">
                   #{orderId.slice(0, 8).toUpperCase()}
                 </p>
               </div>
@@ -202,7 +281,7 @@ export default function Checkout() {
                 <div>
                   <p className="text-sm text-muted-foreground">পেমেন্ট মাধ্যম</p>
                   <p className="font-semibold text-foreground">
-                    {paymentMethods.find((m) => m.id === paymentMethod)?.name}
+                    {paymentMethods.find((m) => m.id === selectedPaymentMethod)?.name}
                   </p>
                 </div>
                 <div>
@@ -253,10 +332,69 @@ export default function Checkout() {
             <div className="flex flex-col lg:flex-row gap-8">
               {/* Left Column - Forms */}
               <div className="flex-1 space-y-6">
-                {/* Shipping Address */}
+                {/* Customer Information */}
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
+                  className="bg-card rounded-xl border border-border p-6"
+                >
+                  <div className="flex items-center gap-3 mb-6">
+                    <div className="w-10 h-10 rounded-full bg-accent/10 flex items-center justify-center">
+                      <User className="w-5 h-5 text-accent" />
+                    </div>
+                    <div>
+                      <h2 className="font-semibold text-foreground">গ্রাহক তথ্য</h2>
+                      <p className="text-sm text-muted-foreground">
+                        আপনার নাম ও যোগাযোগ নম্বর
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="grid gap-4">
+                    <div className="grid sm:grid-cols-2 gap-4">
+                      {/* Customer Name */}
+                      <div className="space-y-2">
+                        <Label htmlFor="customerName">নাম *</Label>
+                        <Input
+                          id="customerName"
+                          name="customerName"
+                          placeholder="আপনার সম্পূর্ণ নাম"
+                          value={formData.customerName}
+                          onChange={handleInputChange}
+                          className={errors.customerName ? "border-destructive" : ""}
+                        />
+                        {errors.customerName && (
+                          <p className="text-xs text-destructive">{errors.customerName}</p>
+                        )}
+                      </div>
+
+                      {/* Phone Number */}
+                      <div className="space-y-2">
+                        <Label htmlFor="phone">ফোন নাম্বার *</Label>
+                        <div className="relative">
+                          <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                          <Input
+                            id="phone"
+                            name="phone"
+                            placeholder="01XXXXXXXXX"
+                            value={formData.phone}
+                            onChange={handleInputChange}
+                            className={`pl-10 ${errors.phone ? "border-destructive" : ""}`}
+                          />
+                        </div>
+                        {errors.phone && (
+                          <p className="text-xs text-destructive">{errors.phone}</p>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </motion.div>
+
+                {/* Delivery Address */}
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.1 }}
                   className="bg-card rounded-xl border border-border p-6"
                 >
                   <div className="flex items-center gap-3 mb-6">
@@ -272,80 +410,81 @@ export default function Checkout() {
                   </div>
 
                   <div className="grid gap-4">
+                    {/* Division & District */}
                     <div className="grid sm:grid-cols-2 gap-4">
                       <div className="space-y-2">
-                        <Label htmlFor="fullName">সম্পূর্ণ নাম *</Label>
-                        <Input
-                          id="fullName"
-                          name="fullName"
-                          placeholder="আপনার নাম"
-                          value={formData.fullName}
-                          onChange={handleInputChange}
-                          required
-                        />
+                        <Label>বিভাগ *</Label>
+                        <Select
+                          value={formData.division}
+                          onValueChange={handleDivisionChange}
+                        >
+                          <SelectTrigger className={errors.division ? "border-destructive" : ""}>
+                            <SelectValue placeholder="বিভাগ নির্বাচন করুন" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {divisions.map((division) => (
+                              <SelectItem key={division.id} value={division.id}>
+                                {division.name}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        {errors.division && (
+                          <p className="text-xs text-destructive">{errors.division}</p>
+                        )}
                       </div>
+
                       <div className="space-y-2">
-                        <Label htmlFor="phone">ফোন নম্বর *</Label>
-                        <div className="relative">
-                          <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                          <Input
-                            id="phone"
-                            name="phone"
-                            placeholder="01XXXXXXXXX"
-                            value={formData.phone}
-                            onChange={handleInputChange}
-                            className="pl-10"
-                            required
-                          />
-                        </div>
+                        <Label>জেলা *</Label>
+                        <Select
+                          value={formData.district}
+                          onValueChange={handleDistrictChange}
+                          disabled={!formData.division}
+                        >
+                          <SelectTrigger className={errors.district ? "border-destructive" : ""}>
+                            <SelectValue placeholder={formData.division ? "জেলা নির্বাচন করুন" : "প্রথমে বিভাগ নির্বাচন করুন"} />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {availableDistricts.map((district) => (
+                              <SelectItem key={district.id} value={district.id}>
+                                {district.name}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        {errors.district && (
+                          <p className="text-xs text-destructive">{errors.district}</p>
+                        )}
                       </div>
                     </div>
 
+                    {/* Full Address */}
                     <div className="space-y-2">
                       <Label htmlFor="address">সম্পূর্ণ ঠিকানা *</Label>
-                      <Input
+                      <Textarea
                         id="address"
                         name="address"
-                        placeholder="বাড়ি নম্বর, রাস্তা, এলাকা"
+                        placeholder="গ্রাম / এলাকা / রাস্তা / বাড়ী নম্বর / বিস্তারিত ঠিকানা লিখুন"
                         value={formData.address}
                         onChange={handleInputChange}
-                        required
+                        rows={3}
+                        className={errors.address ? "border-destructive" : ""}
                       />
+                      {errors.address && (
+                        <p className="text-xs text-destructive">{errors.address}</p>
+                      )}
                     </div>
 
-                    <div className="grid sm:grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="city">শহর *</Label>
-                        <Input
-                          id="city"
-                          name="city"
-                          placeholder="ঢাকা"
-                          value={formData.city}
-                          onChange={handleInputChange}
-                          required
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="area">এলাকা</Label>
-                        <Input
-                          id="area"
-                          name="area"
-                          placeholder="মিরপুর"
-                          value={formData.area}
-                          onChange={handleInputChange}
-                        />
-                      </div>
-                    </div>
-
+                    {/* Additional Notes */}
                     <div className="space-y-2">
                       <Label htmlFor="notes">অতিরিক্ত নোট (ঐচ্ছিক)</Label>
                       <Textarea
                         id="notes"
                         name="notes"
-                        placeholder="ডেলিভারি সম্পর্কে কোনো বিশেষ নির্দেশনা..."
+                        placeholder="ডেলিভারি সম্পর্কে কোনো বিশেষ নির্দেশনা থাকলে লিখুন..."
                         value={formData.notes}
                         onChange={handleInputChange}
-                        rows={3}
+                        rows={2}
                       />
                     </div>
                   </div>
@@ -355,7 +494,7 @@ export default function Checkout() {
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.1 }}
+                  transition={{ delay: 0.2 }}
                   className="bg-card rounded-xl border border-border p-6"
                 >
                   <div className="flex items-center gap-3 mb-6">
@@ -370,33 +509,56 @@ export default function Checkout() {
                     </div>
                   </div>
 
-                  <RadioGroup
-                    value={paymentMethod}
-                    onValueChange={setPaymentMethod}
-                    className="grid sm:grid-cols-2 gap-3"
-                  >
+                  <div className="grid sm:grid-cols-3 gap-3">
                     {paymentMethods.map((method) => (
-                      <label
+                      <button
                         key={method.id}
-                        className={`flex items-center gap-3 p-4 rounded-xl border-2 cursor-pointer transition-all ${
-                          paymentMethod === method.id
-                            ? "border-accent bg-accent/5"
+                        type="button"
+                        onClick={() => handlePaymentMethodSelect(method.id)}
+                        className={`flex flex-col items-center gap-2 p-4 rounded-xl border-2 cursor-pointer transition-all ${
+                          selectedPaymentMethod === method.id && paymentConfirmed
+                            ? "border-green-500 bg-green-500/10"
+                            : selectedPaymentMethod === method.id
+                            ? `border-2`
                             : "border-border hover:border-accent/50"
                         }`}
+                        style={{
+                          borderColor:
+                            selectedPaymentMethod === method.id && paymentConfirmed
+                              ? "#22c55e"
+                              : selectedPaymentMethod === method.id
+                              ? method.color
+                              : undefined,
+                        }}
                       >
-                        <RadioGroupItem value={method.id} id={method.id} />
-                        <method.icon className="w-5 h-5 text-accent" />
-                        <div className="flex-1 min-w-0">
-                          <p className="font-medium text-foreground text-sm">
-                            {method.name}
-                          </p>
-                          <p className="text-xs text-muted-foreground truncate">
-                            {method.description}
-                          </p>
+                        <div
+                          className="w-12 h-12 rounded-full flex items-center justify-center"
+                          style={{ backgroundColor: `${method.color}20` }}
+                        >
+                          <Smartphone className="w-6 h-6" style={{ color: method.color }} />
                         </div>
-                      </label>
+                        <span className="font-medium text-foreground">{method.name}</span>
+                        {selectedPaymentMethod === method.id && paymentConfirmed && (
+                          <span className="text-xs text-green-600 flex items-center gap-1">
+                            <CheckCircle2 className="w-3 h-3" /> নিশ্চিত
+                          </span>
+                        )}
+                      </button>
                     ))}
-                  </RadioGroup>
+                  </div>
+
+                  {errors.paymentMethod && (
+                    <p className="text-xs text-destructive mt-2">{errors.paymentMethod}</p>
+                  )}
+
+                  {/* Show Transaction ID if payment confirmed */}
+                  {paymentConfirmed && transactionId && (
+                    <div className="mt-4 p-3 bg-green-500/10 border border-green-500/30 rounded-lg">
+                      <p className="text-sm text-green-600 dark:text-green-400">
+                        <strong>Transaction ID:</strong> {transactionId}
+                      </p>
+                    </div>
+                  )}
                 </motion.div>
               </div>
 
@@ -405,7 +567,7 @@ export default function Checkout() {
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.2 }}
+                  transition={{ delay: 0.3 }}
                   className="bg-card rounded-xl border border-border p-6 sticky top-24"
                 >
                   <h2 className="font-semibold text-lg text-foreground mb-4">
@@ -441,51 +603,55 @@ export default function Checkout() {
                   <div className="border-t border-border pt-4 space-y-2 text-sm">
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">সাবটোটাল</span>
-                      <span className="text-foreground">
-                        ৳{subtotal.toLocaleString()}
-                      </span>
+                      <span className="text-foreground">৳{subtotal.toLocaleString()}</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">ডেলিভারি চার্জ</span>
                       <span className="text-foreground">৳{shipping}</span>
                     </div>
-                    <div className="border-t border-border pt-2 mt-2">
-                      <div className="flex justify-between text-lg font-bold">
-                        <span>সর্বমোট</span>
-                        <span className="text-accent">৳{total.toLocaleString()}</span>
-                      </div>
+                    <div className="flex justify-between pt-2 border-t border-border text-base font-bold">
+                      <span className="text-foreground">মোট</span>
+                      <span className="text-accent">৳{total.toLocaleString()}</span>
                     </div>
                   </div>
 
                   <Button
                     type="submit"
-                    className="w-full mt-6 h-12 text-base font-semibold gap-2"
+                    className="w-full mt-6 h-12 text-base gap-2"
                     disabled={createOrder.isPending}
                   >
                     {createOrder.isPending ? (
                       <>
-                        <Loader2 className="w-5 h-5 animate-spin" />
-                        অর্ডার প্রসেস হচ্ছে...
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                        অর্ডার করা হচ্ছে...
                       </>
                     ) : (
                       <>
-                        <CheckCircle2 className="w-5 h-5" />
+                        <CheckCircle2 className="w-4 h-4" />
                         অর্ডার কনফার্ম করুন
                       </>
                     )}
                   </Button>
 
-                  <p className="text-xs text-muted-foreground text-center mt-4">
-                    অর্ডার করার মাধ্যমে আপনি আমাদের{" "}
-                    <Link to="/terms" className="text-accent hover:underline">
-                      শর্তাবলী
-                    </Link>{" "}
-                    মেনে নিচ্ছেন
+                  <p className="text-xs text-muted-foreground text-center mt-3">
+                    অর্ডার করার মাধ্যমে আপনি আমাদের শর্তাবলী মেনে নিচ্ছেন
                   </p>
                 </motion.div>
               </div>
             </div>
           </form>
+
+          {/* Payment Modal */}
+          {currentPaymentMethod && (
+            <PaymentModal
+              isOpen={isPaymentModalOpen}
+              onClose={() => setIsPaymentModalOpen(false)}
+              paymentMethod={currentPaymentMethod}
+              transactionId={transactionId}
+              onTransactionIdChange={setTransactionId}
+              onConfirm={handlePaymentConfirm}
+            />
+          )}
         </div>
       </section>
     </Layout>
